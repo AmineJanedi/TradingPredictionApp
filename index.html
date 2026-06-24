@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gold Intelligence · Live Trading Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   :root {
     --bg: #090c10;
@@ -308,7 +307,7 @@
     margin-bottom: 16px;
   }
 
-  @media (max-width: 700px) { .trade-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) { .trade-grid { grid-template-columns: repeat(2, 1fr) !important; } }
 
   .trade-box {
     background: var(--bg3);
@@ -413,6 +412,19 @@
   .flash-down { animation: flashDown 0.6s ease; }
   @keyframes flashUp { 0%,100%{color:inherit} 30%{color:var(--green)} }
   @keyframes flashDown { 0%,100%{color:inherit} 30%{color:var(--red)} }
+
+  /* Style override for clean integration of the tradingview elements */
+  .tradingview-widget-copyright {
+    font-size: 10px !important;
+    font-family: var(--font-mono) !important;
+    color: var(--muted2) !important;
+    padding-top: 6px;
+    text-align: right;
+  }
+  .tradingview-widget-copyright a {
+    color: var(--blue) !important;
+    text-decoration: none;
+  }
 </style>
 </head>
 <body>
@@ -433,7 +445,7 @@
         <div style="font-size:10px; color:var(--muted2); font-family:var(--font-mono); margin-top:2px;" id="autoRefresh">Auto-refresh: 60s</div>
       </div>
       <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
-        <span class="refresh-icon">↻</span> Refresh
+        <span class="refresh-icon">↻</span> Refresh Metrics
       </button>
     </div>
   </header>
@@ -442,7 +454,7 @@
 
   <div class="price-hero">
     <div class="price-main">
-      <div class="price-label">GOLD / USD · SPOT (PAXG)</div>
+      <div class="price-label">GOLD / USD · SPOT (PAXG) &nbsp;·&nbsp; <span style="color:var(--green);font-weight:700;">⬤ LIVE STREAM</span></div>
       <div class="price-value" id="priceValue">$—</div>
       <div class="price-change-row">
         <span class="price-change" id="priceChange">—</span>
@@ -478,28 +490,87 @@
   </div>
 
   <div class="chart-card">
-    <div class="chart-header">
-      <div class="card-title" style="margin-bottom:0">PRICE CHART · 1H CANDLES</div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);color:var(--muted);">
-          <span style="display:inline-block;width:12px;height:2px;background:var(--blue)"></span> Price
-          <span style="display:inline-block;width:12px;height:2px;background:var(--amber);margin-left:8px"></span> EMA20
-          <span style="display:inline-block;width:12px;height:2px;background:rgba(255,255,255,0.3);margin-left:8px"></span> EMA50
-          <span style="display:inline-block;width:6px;height:6px;background:var(--green);border-radius:50%;margin-left:8px"></span> Target
-        </div>
+    <div class="chart-header" style="margin-bottom: 12px;">
+      <div class="card-title" style="margin-bottom:0">TRADINGVIEW LIVE INTRA-DAY ENGINE</div>
+    </div>
+    <div style="height: 400px; width:100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/XAUUSD/?exchange=OANDA" rel="noopener nofollow" target="_blank"><span class="blue-text">XAUUSD quote</span></a><span class="trademark">&nbsp;by TradingView</span></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+  {
+  "lineWidth": 2,
+  "lineType": 0,
+  "chartType": "candlesticks",
+  "fontColor": "rgb(106, 109, 120)",
+  "gridLineColor": "rgba(242, 242, 242, 0.06)",
+  "volumeUpColor": "rgba(34, 171, 148, 0.5)",
+  "volumeDownColor": "rgba(247, 82, 95, 0.5)",
+  "backgroundColor": "#0F0F0F",
+  "widgetFontColor": "#DBDBDB",
+  "upColor": "#22ab94",
+  "downColor": "#f7525f",
+  "borderUpColor": "#22ab94",
+  "borderDownColor": "#f7525f",
+  "wickUpColor": "#22ab94",
+  "wickDownColor": "#f7525f",
+  "colorTheme": "dark",
+  "isTransparent": false,
+  "locale": "en",
+  "chartOnly": false,
+  "scalePosition": "right",
+  "scaleMode": "Normal",
+  "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+  "valuesTracking": "1",
+  "changeMode": "price-and-percent",
+  "symbols": [
+    [
+      "OANDA:XAUUSD|1D"
+    ]
+  ],
+  "dateRanges": [
+    "1d|60",
+    "1m|30",
+    "3m|60",
+    "12m|1D",
+    "60m|1W",
+    "all|1M"
+  ],
+  "fontSize": "10",
+  "headerFontSize": "medium",
+  "autosize": true,
+  "width": "100%",
+  "height": "100%",
+  "noTimeScale": false,
+  "hideDateRanges": false,
+  "showMA": true,
+  "maLength": 9,
+  "maLineColor": "#2962FF",
+  "maLineWidth": 1,
+  "hideMarketStatus": false,
+  "hideSymbolLogo": false
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
       </div>
-    </div>
-    <div style="position:relative; height:260px; width:100%;">
-      <canvas id="priceChart" role="img" aria-label="Gold 1-hour price chart with EMA overlays and prediction target"></canvas>
-    </div>
   </div>
 
   <div class="trade-setup" id="tradeSetup">
     <div class="trade-header">
       <div class="trade-title">⚡ Trade Setup · 1H Prediction</div>
-      <span class="trade-bias" id="tradeBias">—</span>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);">⏱ EST. DURATION</span>
+        <span class="trade-bias" id="tradeDuration" style="font-size:12px;font-family:var(--font-mono);font-weight:700;padding:4px 12px;border-radius:6px;background:var(--blue-dim);color:var(--blue);">—</span>
+        <span class="trade-bias" id="tradeBias">—</span>
+      </div>
     </div>
-    <div class="trade-grid">
+    <!-- Low R:R warning banner -->
+    <div id="rrWarning" style="display:none;background:rgba(210,153,34,0.1);border:1px solid rgba(210,153,34,0.3);border-radius:8px;padding:8px 14px;margin-bottom:14px;font-size:11px;font-family:var(--font-mono);color:var(--amber);">
+      ⚠ R:R below minimum threshold (1:1.5) — trade setup not recommended
+    </div>
+    <div class="trade-grid" style="grid-template-columns:repeat(5,1fr);">
       <div class="trade-box entry-box">
         <div class="trade-box-label">ENTRY ZONE</div>
         <div class="trade-box-val" id="entryVal">—</div>
@@ -519,6 +590,11 @@
         <div class="trade-box-label">TAKE PROFIT 2</div>
         <div class="trade-box-val" id="tp2Val">—</div>
         <div class="trade-box-sub" id="tp2Pct" style="color:var(--green)">—</div>
+      </div>
+      <div class="trade-box" style="border-color:rgba(88,166,255,0.2);">
+        <div class="trade-box-label" style="color:var(--blue);">TRADE QUALITY</div>
+        <div class="trade-box-val" id="tradeQuality" style="font-size:15px;">—</div>
+        <div class="trade-box-sub" id="tradeQualitySub" style="color:var(--muted)">—</div>
       </div>
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
@@ -609,7 +685,7 @@
   </div>
 
   <footer>
-    <p><strong>Data source:</strong> Binance Public API (PAXGUSDT - Gold Token) · No API key required · Updates every 60 seconds<br>
+    <p><strong>Charts:</strong> Embedded TradingView Interface Engine (OANDA Feed) · <strong>Metrics:</strong> Binance Unlocked Proxy Stream<br>
     <strong>Disclaimer:</strong> This tool is for educational purposes only. Not financial advice. Commodity trading involves significant risk.</p>
     <p style="text-align:right;"><strong>Engine:</strong> RSI · MACD · BB · EMA · Stoch · ATR · Volume · Momentum<br>Auto-refresh active · Press Refresh for instant update</p>
   </footer>
@@ -617,14 +693,20 @@
 </div>
 
 <script>
-// Format variables optimized for Gold (shows decimals for cents)
 const $ = id => document.getElementById(id);
 const fmt = n => '$' + parseFloat(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 const fmtB = n => '$' + (n/1e6).toFixed(2) + 'M';
 const fmtVol = n => parseFloat(n).toLocaleString('en-US', {maximumFractionDigits:0});
 const pctDiff = (a,b) => ((a-b)/b*100);
 
-// TECHNICAL ANALYSIS
+// ── GLOBAL CACHE ──────────────────────────────────────────────
+let cachedKlines = null;       // 1h candles, refreshed every 30s
+let cachedTicker = null;       // 24h stats, refreshed every 30s
+let livePrice   = null;        // updated every WebSocket tick
+let wsReconnectTimer = null;
+let klineRefreshTimer = null;
+
+// TECHNICAL MATHEMATICS CORE
 function calcRSI(closes, period = 14) {
   if (closes.length < period + 1) return 50;
   let gains = 0, losses = 0;
@@ -720,134 +802,269 @@ function calcVolumeMomentum(klines, period = 20) {
   return vols[vols.length - 1] / avgVol;
 }
 
-// STRATEGY LOGIC ENGINE
+// ── FIXED STOCH RSI — %D is 3-period SMA of %K ───────────────
+function calcStochRSIFixed(closes, rsiPeriod = 14, stochPeriod = 14, smoothK = 3, smoothD = 3) {
+  // Build RSI series across whole close array
+  const rsiSeries = [];
+  for (let i = rsiPeriod; i <= closes.length; i++) {
+    rsiSeries.push(calcRSI(closes.slice(0, i), rsiPeriod));
+  }
+  if (rsiSeries.length < stochPeriod) return { k: 50, d: 50, crossUp: false, crossDown: false };
+
+  // Raw StochRSI %K for each point
+  const rawK = [];
+  for (let i = stochPeriod - 1; i < rsiSeries.length; i++) {
+    const window = rsiSeries.slice(i - stochPeriod + 1, i + 1);
+    const lo = Math.min(...window), hi = Math.max(...window);
+    rawK.push(hi === lo ? 50 : ((rsiSeries[i] - lo) / (hi - lo)) * 100);
+  }
+
+  // Smooth %K with SMA(smoothK)
+  const smoothedK = [];
+  for (let i = smoothK - 1; i < rawK.length; i++) {
+    smoothedK.push(rawK.slice(i - smoothK + 1, i + 1).reduce((a, b) => a + b, 0) / smoothK);
+  }
+
+  // %D = SMA(smoothD) of smoothedK
+  const smoothedD = [];
+  for (let i = smoothD - 1; i < smoothedK.length; i++) {
+    smoothedD.push(smoothedK.slice(i - smoothD + 1, i + 1).reduce((a, b) => a + b, 0) / smoothD);
+  }
+
+  const k = smoothedK.length > 0 ? smoothedK[smoothedK.length - 1] : 50;
+  const d = smoothedD.length > 0 ? smoothedD[smoothedD.length - 1] : 50;
+  const kPrev = smoothedK.length > 1 ? smoothedK[smoothedK.length - 2] : k;
+  const dPrev = smoothedD.length > 1 ? smoothedD[smoothedD.length - 2] : d;
+
+  // Detect K/D crossovers (the actual signal)
+  const crossUp   = kPrev <= dPrev && k > d;   // K crossed above D → bullish
+  const crossDown  = kPrev >= dPrev && k < d;   // K crossed below D → bearish
+
+  return { k, d, crossUp, crossDown };
+}
+
+// ── RSI DIVERGENCE CHECK ──────────────────────────────────────
+// Detects simple price/RSI divergence over last N candles
+function detectRSIDivergence(closes, rsiPeriod = 14, lookback = 5) {
+  if (closes.length < rsiPeriod + lookback + 2) return 'none';
+  const recentCloses = closes.slice(-(lookback + 1));
+  const rsiNow  = calcRSI(closes, rsiPeriod);
+  const rsiPrev = calcRSI(closes.slice(0, -lookback), rsiPeriod);
+  const priceUp   = recentCloses[recentCloses.length - 1] > recentCloses[0];
+  const rsiUp     = rsiNow > rsiPrev;
+  if (priceUp && !rsiUp)  return 'bearish'; // price higher, RSI lower → bearish divergence
+  if (!priceUp && rsiUp)  return 'bullish'; // price lower,  RSI higher → bullish divergence
+  return 'none';
+}
+
+// ── VOLUME DIVERGENCE CHECK ───────────────────────────────────
+// Rising price on falling volume = weakness; falling price on rising vol = capitulation
+function detectVolDivergence(closes, klines, lookback = 5) {
+  if (closes.length < lookback + 2 || klines.length < lookback + 2) return 'none';
+  const recentC = closes.slice(-(lookback + 1));
+  const recentV = klines.slice(-(lookback + 1)).map(k => parseFloat(k[5]));
+  const priceUp = recentC[recentC.length - 1] > recentC[0];
+  // Volume trend: compare first-half avg vs second-half avg
+  const half = Math.floor(recentV.length / 2);
+  const volEarly = recentV.slice(0, half).reduce((a, b) => a + b, 0) / half;
+  const volLate  = recentV.slice(half).reduce((a, b) => a + b, 0) / (recentV.length - half);
+  const volRising = volLate > volEarly * 1.1;
+  if (priceUp && !volRising)  return 'weakness';      // up on low vol
+  if (!priceUp && volRising)  return 'capitulation';  // down on high vol (potential reversal)
+  return 'none';
+}
+
+// ── MAIN PREDICTION ENGINE (fixed) ───────────────────────────
 function buildPrediction(price, closes, klines) {
-  const rsi = calcRSI(closes);
+  const rsi      = calcRSI(closes);
   const { macd, signal: macdSig, histogram } = calcMACD(closes);
-  const bb = calcBB(closes);
-  const stoch = calcStochRSI(closes);
-  const ema20 = calcEMA(closes, 20);
-  const ema50 = calcEMA(closes, 50);
-  const atr = calcATR(klines);
+  const bb       = calcBB(closes);
+  const stoch    = calcStochRSIFixed(closes);
+  const ema20    = calcEMA(closes, 20);
+  const ema50    = calcEMA(closes, 50);
+  const atr      = calcATR(klines);
   const volRatio = calcVolumeMomentum(klines);
-  const roc4 = closes.length >= 5 ? (closes[closes.length - 1] - closes[closes.length - 5]) / closes[closes.length - 5] * 100 : 0;
+  const roc4     = closes.length >= 5
+    ? (closes[closes.length - 1] - closes[closes.length - 5]) / closes[closes.length - 5] * 100 : 0;
+  const rsiDiv   = detectRSIDivergence(closes);
+  const volDiv   = detectVolDivergence(closes, klines);
 
   let score = 0, maxScore = 0;
   const signals = [];
 
+  // ── 1. RSI — trend-aware (not just oversold/overbought levels) ──
+  // In trend context: RSI 45–70 in uptrend is healthy, not bearish
   maxScore += 2;
-  if (rsi < 30) { score += 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy', bar: rsi / 100 }); }
-  else if (rsi < 45) { score += 1; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy', bar: rsi / 100 }); }
-  else if (rsi > 70) { score -= 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'sell', bar: rsi / 100 }); }
-  else if (rsi > 55) { score -= 1; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'sell', bar: rsi / 100 }); }
-  else { signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'neutral', bar: rsi / 100 }); }
+  const rsiTrendBull = rsi > 45 && rsi < 70;  // healthy bull zone
+  const rsiTrendBear = rsi > 30 && rsi < 55;  // healthy bear zone
+  if      (rsi < 30)              { score += 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',     bar: rsi/100, note: 'Oversold' }); }
+  else if (rsi < 45)              { score += 1; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',     bar: rsi/100, note: 'Approaching OS' }); }
+  else if (rsi > 70)              { score -= 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'sell',    bar: rsi/100, note: 'Overbought' }); }
+  else if (rsi > 55 && rsi <= 70) { score += 0.5; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',  bar: rsi/100, note: 'Bull momentum zone' }); }
+  else                             { signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'neutral', bar: rsi/100, note: 'Mid range' }); }
 
+  // ── 2. RSI Divergence (bonus signal, weight 1.5) ──
+  maxScore += 1.5;
+  if      (rsiDiv === 'bullish')  { score += 1.5; signals.push({ name: 'RSI Divg', value: 'Bullish', signal: 'buy',  bar: 0.8, note: 'Price↓ RSI↑' }); }
+  else if (rsiDiv === 'bearish')  { score -= 1.5; signals.push({ name: 'RSI Divg', value: 'Bearish', signal: 'sell', bar: 0.2, note: 'Price↑ RSI↓' }); }
+  else                            {               signals.push({ name: 'RSI Divg', value: 'None',    signal: 'neutral', bar: 0.5, note: 'No divergence' }); }
+
+  // ── 3. MACD — full 4-state logic ──
   maxScore += 2;
-  if (macd > macdSig && histogram > 0) { score += 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy', bar: 0.7 }); }
-  else if (macd > macdSig) { score += 1; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy', bar: 0.55 }); }
-  else if (macd < macdSig && histogram < 0) { score -= 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell', bar: 0.3 }); }
-  else { score -= 1; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell', bar: 0.4 }); }
+  if      (macd > macdSig && histogram > 0)  { score += 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy',     bar: 0.75, note: 'Bull cross + hist↑' }); }
+  else if (macd > macdSig && histogram <= 0) { score += 0.5; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy',   bar: 0.55, note: 'Bull cross, hist fading' }); }
+  else if (macd < macdSig && histogram < 0)  { score -= 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell',    bar: 0.25, note: 'Bear cross + hist↓' }); }
+  else                                        { score -= 0.5; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell', bar: 0.4,  note: 'Bear cross, hist narrowing' }); }
 
+  // ── 4. Bollinger Bands ──
   maxScore += 1.5;
-  const bbPos = (price - bb.lower) / (bb.upper - bb.lower);
-  if (price < bb.lower) { score += 1.5; signals.push({ name: 'BB(20,2)', value: 'Below lower', signal: 'buy', bar: 0.1 }); }
-  else if (price > bb.upper) { score -= 1.5; signals.push({ name: 'BB(20,2)', value: 'Above upper', signal: 'sell', bar: 0.9 }); }
-  else if (bbPos < 0.3) { score += 0.5; signals.push({ name: 'BB(20,2)', value: 'Lower zone', signal: 'buy', bar: bbPos }); }
-  else if (bbPos > 0.7) { score -= 0.5; signals.push({ name: 'BB(20,2)', value: 'Upper zone', signal: 'sell', bar: bbPos }); }
-  else { signals.push({ name: 'BB(20,2)', value: 'Mid-band', signal: 'neutral', bar: bbPos }); }
+  const bbPos = bb.upper === bb.lower ? 0.5 : (price - bb.lower) / (bb.upper - bb.lower);
+  if      (price < bb.lower)  { score += 1.5; signals.push({ name: 'BB(20,2)', value: 'Below lower', signal: 'buy',     bar: 0.05, note: 'Outside lower band' }); }
+  else if (price > bb.upper)  { score -= 1.5; signals.push({ name: 'BB(20,2)', value: 'Above upper', signal: 'sell',    bar: 0.95, note: 'Outside upper band' }); }
+  else if (bbPos < 0.3)       { score += 0.5; signals.push({ name: 'BB(20,2)', value: 'Lower zone',  signal: 'buy',     bar: bbPos, note: 'Near lower band' }); }
+  else if (bbPos > 0.7)       { score -= 0.5; signals.push({ name: 'BB(20,2)', value: 'Upper zone',  signal: 'sell',    bar: bbPos, note: 'Near upper band' }); }
+  else                        {               signals.push({ name: 'BB(20,2)', value: 'Mid-band',     signal: 'neutral', bar: bbPos, note: 'Neutral zone' }); }
 
+  // ── 5. EMA(20) — short-term trend ──
   maxScore += 1;
-  if (price > ema20 * 1.001) { score += 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'buy', bar: 0.7 }); }
-  else if (price < ema20 * 0.999) { score -= 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'sell', bar: 0.3 }); }
-  else { signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'neutral', bar: 0.5 }); }
+  if      (price > ema20 * 1.001) { score += 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'buy',     bar: 0.7, note: 'Price above EMA20' }); }
+  else if (price < ema20 * 0.999) { score -= 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'sell',    bar: 0.3, note: 'Price below EMA20' }); }
+  else                             {             signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'neutral', bar: 0.5, note: 'At EMA20' }); }
 
+  // ── 6. EMA(50) — medium-term trend (higher weight) ──
   maxScore += 1.5;
-  if (price > ema50 * 1.001) { score += 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'buy', bar: 0.75 }); }
-  else if (price < ema50 * 0.999) { score -= 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'sell', bar: 0.25 }); }
-  else { signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'neutral', bar: 0.5 }); }
+  if      (price > ema50 * 1.001) { score += 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'buy',     bar: 0.75, note: 'Price above EMA50' }); }
+  else if (price < ema50 * 0.999) { score -= 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'sell',    bar: 0.25, note: 'Price below EMA50' }); }
+  else                             {               signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'neutral', bar: 0.5,  note: 'At EMA50' }); }
 
+  // ── 7. EMA(20) vs EMA(50) — golden/death cross ──
   maxScore += 1;
-  if (stoch.k < 20) { score += 1; signals.push({ name: 'Stoch RSI', value: stoch.k.toFixed(1), signal: 'buy', bar: stoch.k / 100 }); }
-  else if (stoch.k > 80) { score -= 1; signals.push({ name: 'Stoch RSI', value: stoch.k.toFixed(1), signal: 'sell', bar: stoch.k / 100 }); }
-  else { signals.push({ name: 'Stoch RSI', value: stoch.k.toFixed(1), signal: 'neutral', bar: stoch.k / 100 }); }
+  if      (ema20 > ema50 * 1.001) { score += 1; signals.push({ name: 'EMA Cross', value: '20>50', signal: 'buy',     bar: 0.8, note: 'Golden cross zone' }); }
+  else if (ema20 < ema50 * 0.999) { score -= 1; signals.push({ name: 'EMA Cross', value: '20<50', signal: 'sell',    bar: 0.2, note: 'Death cross zone' }); }
+  else                             {             signals.push({ name: 'EMA Cross', value: 'Flat',  signal: 'neutral', bar: 0.5, note: 'EMAs converging' }); }
 
+  // ── 8. Stoch RSI — K/D crossover logic (fixed) ──
+  maxScore += 1.5;
+  if      (stoch.crossUp  && stoch.k < 50)  { score += 1.5; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'buy',  bar: stoch.k/100, note: 'K crossed above D (oversold)' }); }
+  else if (stoch.crossDown && stoch.k > 50) { score -= 1.5; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'sell', bar: stoch.k/100, note: 'K crossed below D (overbought)' }); }
+  else if (stoch.k < 20)  { score += 0.75; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'buy',     bar: stoch.k/100, note: 'Oversold territory' }); }
+  else if (stoch.k > 80)  { score -= 0.75; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'sell',    bar: stoch.k/100, note: 'Overbought territory' }); }
+  else                     {               signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'neutral', bar: stoch.k/100, note: 'Mid range' }); }
+
+  // ── 9. Volume — divergence-aware (fixed) ──
+  maxScore += 1.5;
+  if (volDiv === 'weakness') {
+    // Price up on falling volume = supply exhaustion → bearish lean
+    score -= 1;
+    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'sell', bar: Math.min(volRatio/3,1), note: 'Price↑ Vol↓ weakness' });
+  } else if (volDiv === 'capitulation') {
+    // Price down on rising volume = potential exhaustion → bullish lean
+    score += 1;
+    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'buy', bar: Math.min(volRatio/3,1), note: 'Price↓ Vol↑ capitulation' });
+  } else if (volRatio > 1.8) {
+    // High volume confirms current direction
+    const dir = score > 0 ? 1.5 : score < 0 ? -1.5 : 0;
+    score += dir;
+    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: dir > 0 ? 'buy' : dir < 0 ? 'sell' : 'neutral', bar: Math.min(volRatio/3,1), note: 'High vol confirmation' });
+  } else if (volRatio < 0.6) {
+    // Very low volume = weak conviction, lean against trend
+    const dir = score > 0 ? -0.5 : score < 0 ? 0.5 : 0;
+    score += dir;
+    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'neutral', bar: Math.min(volRatio/3,1), note: 'Low vol, weak conviction' });
+  } else {
+    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'neutral', bar: Math.min(volRatio/3,1), note: 'Normal volume' });
+  }
+
+  // ── 10. Momentum (ROC-4) ──
   maxScore += 1;
-  if (volRatio > 1.5) {
-    const dir = score > 0 ? 1 : score < 0 ? -1 : 0; score += dir;
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2) + 'x', signal: dir > 0 ? 'buy' : dir < 0 ? 'sell' : 'neutral', bar: Math.min(volRatio / 3, 1) });
-  } else { signals.push({ name: 'Volume', value: volRatio.toFixed(2) + 'x', signal: 'neutral', bar: Math.min(volRatio / 3, 1) }); }
+  if      (roc4 > 0.15)  { score += 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'buy',     bar: Math.min(0.5+roc4/2,1), note: '4-bar ROC bullish' }); }
+  else if (roc4 < -0.15) { score -= 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'sell',    bar: Math.max(0.5+roc4/2,0), note: '4-bar ROC bearish' }); }
+  else                   {             signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'neutral', bar: 0.5, note: 'Flat momentum' }); }
 
-  maxScore += 1;
-  if (roc4 > 0.1) { score += 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2) + '%', signal: 'buy', bar: Math.min(0.5 + roc4 / 2, 1) }); }
-  else if (roc4 < -0.1) { score -= 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2) + '%', signal: 'sell', bar: Math.max(0.5 + roc4 / 2, 0) }); }
-  else { signals.push({ name: 'Momentum', value: roc4.toFixed(2) + '%', signal: 'neutral', bar: 0.5 }); }
-
+  // ── SCORE NORMALISATION ──
   const normalizedScore = score / maxScore;
-  const bullish = normalizedScore > 0;
-  const strength = Math.abs(normalizedScore);
+  const bullish  = normalizedScore >= 0;
+  const strength = Math.abs(normalizedScore);   // 0–1
 
-  const atrMultiplier = 0.8 + strength * 1.4;
-  const targetPrice = price + (atr * atrMultiplier * (normalizedScore >= 0 ? 1 : -1));
+  // ── TARGET PRICE ──
+  const atrMultiplier = 1.0 + strength * 2.0;  // min 1× ATR, max 3× ATR
+  const targetPrice   = price + (atr * atrMultiplier * (bullish ? 1 : -1));
 
-  const buys = signals.filter(s => s.signal === 'buy').length;
-  const sells = signals.filter(s => s.signal === 'sell').length;
-  const confidence = Math.round(38 + (Math.abs(buys - sells) / signals.length) * 52);
+  // ── SL / TP — strength-scaled R:R (minimum 1:1.5 enforced) ──
+  // SL: tighter on high-strength signals, looser on weak ones
+  const slMult  = strength > 0.6 ? 1.2 : strength > 0.3 ? 1.5 : 1.8;
+  // TP1: always gives at least 1:1.5 R:R
+  const tp1Mult = slMult * 1.6;   // ≥ 1:1.6 by construction
+  // TP2: scales with strength — stronger signal = wider target
+  const tp2Mult = slMult * (2.5 + strength * 2.0);  // 1:2.5 to 1:4.5
 
-  const slDist = atr * 1.5;
-  const tp1Dist = atr * 1.8;
-  const tp2Dist = atr * 3.0;
+  const slDist  = atr * slMult;
+  const tp1Dist = atr * tp1Mult;
+  const tp2Dist = atr * tp2Mult;
 
-  const sl = bullish ? price - slDist : price + slDist;
+  const sl  = bullish ? price - slDist  : price + slDist;
   const tp1 = bullish ? price + tp1Dist : price - tp1Dist;
   const tp2 = bullish ? price + tp2Dist : price - tp2Dist;
 
-  const riskPct = Math.abs(pctDiff(sl, price));
+  const riskPct    = Math.abs(pctDiff(sl, price));
+  const reward1Pct = Math.abs(pctDiff(tp1, price));
+  const reward2Pct = Math.abs(pctDiff(tp2, price));
+  const rr1        = reward1Pct / riskPct;
+  const rr2        = reward2Pct / riskPct;
+
+  // ── CONFIDENCE — based on signal agreement AND strength ──
+  const buys  = signals.filter(s => s.signal === 'buy').length;
+  const sells = signals.filter(s => s.signal === 'sell').length;
+  const neuts = signals.filter(s => s.signal === 'neutral').length;
+  const agreementRatio = Math.abs(buys - sells) / signals.length;  // 0–1
+  // Weighted: 60% agreement, 40% normalized score strength
+  const confidence = Math.round(Math.min(95, 35 + agreementRatio * 40 + strength * 25));
+
+  // ── TRADE QUALITY SCORE ──
+  // Combines R:R quality, signal strength, and whether indicators agree
+  const rrQuality = Math.min(rr1 / 3, 1);  // normalise: 3:1 = perfect
+  const qualityRaw = (strength * 0.45) + (rrQuality * 0.35) + (agreementRatio * 0.20);
+  const qualityPct = Math.round(qualityRaw * 100);
+  let qualityLabel, qualityColor;
+  if      (qualityPct >= 75) { qualityLabel = '🔥 Excellent';  qualityColor = 'var(--green)'; }
+  else if (qualityPct >= 55) { qualityLabel = '✅ Good';        qualityColor = '#64d08a'; }
+  else if (qualityPct >= 38) { qualityLabel = '⚡ Fair';        qualityColor = 'var(--amber)'; }
+  else                        { qualityLabel = '⚠ Weak';        qualityColor = 'var(--red)'; }
+
+  // ── ESTIMATED TRADE DURATION ──
+  // Based on: ATR vs price distance to TP1, vol ratio, signal strength
+  // Gold on 1h chart: 1 ATR ≈ 0.5–1h move. Wider TP = longer hold.
+  const atrPct = (atr / price) * 100;
+  let durationHrs;
+  if      (strength > 0.7 && volRatio > 1.4) durationHrs = 1;        // strong signal + high vol = fast
+  else if (strength > 0.5 && volRatio > 1.0) durationHrs = 2;
+  else if (strength > 0.35)                  durationHrs = 3;
+  else if (strength > 0.2)                   durationHrs = 4;
+  else                                        durationHrs = 6;        // weak = slow grind
+  // If TP2 is very wide, add time
+  if (tp2Mult > 3.5) durationHrs = Math.min(durationHrs + 2, 8);
+
+  let durationLabel;
+  if      (durationHrs <= 1) durationLabel = '~1 Hour';
+  else if (durationHrs <= 2) durationLabel = '1–2 Hours';
+  else if (durationHrs <= 3) durationLabel = '2–3 Hours';
+  else if (durationHrs <= 4) durationLabel = '3–4 Hours';
+  else if (durationHrs <= 6) durationLabel = '4–6 Hours';
+  else                        durationLabel = '6–8 Hours';
+
   const topSignals = signals.filter(s => s.signal !== 'neutral').map(s => s.name).slice(0, 4).join(', ');
 
   return {
-    score: normalizedScore, bullish, strength, signals, buys, sells, neuts: signals.filter(s => s.signal === 'neutral').length,
-    confidence, targetPrice, entry: price, sl, tp1, tp2, riskPct, rewardPct1: Math.abs(pctDiff(tp1, price)), rewardPct2: Math.abs(pctDiff(tp2, price)),
-    rrRatio1: Math.abs(pctDiff(tp1, price)) / riskPct, rrRatio2: Math.abs(pctDiff(tp2, price)) / riskPct, roc4, atr, volRatio, bb,
-    basis: `${buys} bullish · ${sells} bearish signals. Drivers: ${topSignals || 'neutral structure'}. ATR=${atr.toFixed(2)} · Vol=${volRatio.toFixed(2)}x`
+    score: normalizedScore, bullish, strength, signals, buys, sells, neuts,
+    confidence, targetPrice, entry: price, sl, tp1, tp2,
+    riskPct, rewardPct1: reward1Pct, rewardPct2: reward2Pct,
+    rrRatio1: rr1, rrRatio2: rr2,
+    roc4, atr, volRatio, bb,
+    qualityPct, qualityLabel, qualityColor,
+    durationLabel, durationHrs,
+    rrBelowMin: rr1 < 1.5,
+    basis: `${buys} bullish · ${sells} bearish · ${neuts} neutral signals. Drivers: ${topSignals || 'no clear driver'}. ATR=${atr.toFixed(2)} · Vol=${volRatio.toFixed(2)}x · Strength=${Math.round(strength*100)}%`
   };
-}
-
-let chart = null;
-function renderChart(klines, targetPrice, pred) {
-  const closes = klines.map(k => parseFloat(k[4]));
-  const labels = klines.map(k => {
-    const d = new Date(k[0]);
-    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-  });
-
-  const ema20s = calcEMASeries(closes, 20);
-  const ema50s = calcEMASeries(closes, Math.min(50, closes.length));
-
-  if (chart) { chart.destroy(); }
-  const ctx = $('priceChart').getContext('2d');
-  const color = pred.bullish ? '#3fb950' : '#f85149';
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [...labels, '+1h'],
-      datasets: [
-        { label: 'Gold Price', data: [...closes, null], borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.06)', fill: true, tension: 0.15, pointRadius: 0, borderWidth: 2 },
-        { label: 'EMA20', data: [...ema20s, null], borderColor: '#d29922', backgroundColor: 'transparent', tension: 0.15, pointRadius: 0, borderWidth: 1.5 },
-        { label: 'EMA50', data: [...ema50s, null], borderColor: 'rgba(255,255,255,0.3)', backgroundColor: 'transparent', tension: 0.15, pointRadius: 0, borderWidth: 1, borderDash: [4, 4] },
-        { label: '1h Target', data: [...closes.map(() => null), targetPrice], borderColor: color, backgroundColor: color, pointRadius: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8], pointStyle: pred.bullish ? 'triangle' : 'rectRot', showLine: false }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { font: { family: "'Space Mono', monospace", size: 9 }, color: '#4d5566', maxTicksLimit: 10 }, grid: { color: 'rgba(255,255,255,0.03)' } },
-        y: { position: 'right', ticks: { font: { family: "'Space Mono', monospace", size: 9 }, color: '#4d5566', callback: v => '$' + Math.round(v).toLocaleString() }, grid: { color: 'rgba(255,255,255,0.04)' } }
-      }
-    }
-  });
 }
 
 function flashEl(el, dir) {
@@ -857,7 +1074,7 @@ function flashEl(el, dir) {
 }
 
 let prevPrice = null;
-function renderUI(ticker, klines, bookTicker) {
+function renderUI(ticker, klines) {
   const price = parseFloat(ticker.lastPrice);
   const change = parseFloat(ticker.priceChangePercent);
   const changeAbs = parseFloat(ticker.priceChange);
@@ -865,9 +1082,7 @@ function renderUI(ticker, klines, bookTicker) {
   const low = parseFloat(ticker.lowPrice);
   const open = parseFloat(ticker.openPrice);
   const vol = parseFloat(ticker.volume);
-  const mcap = price * 180000; // rough gold token supply estimate
-  const bid = bookTicker ? parseFloat(bookTicker.bidPrice) : null;
-  const ask = bookTicker ? parseFloat(bookTicker.askPrice) : null;
+  const mcap = price * 182500; 
 
   const priceEl = $('priceValue');
   priceEl.textContent = fmt(price);
@@ -883,7 +1098,7 @@ function renderUI(ticker, klines, bookTicker) {
   $('stat-open').textContent = fmt(open);
   $('stat-vol').textContent = fmtVol(vol) + ' oz';
   $('stat-mcap').textContent = fmtB(mcap);
-  $('stat-bidask').textContent = bid ? bid.toFixed(2) + ' / ' + ask.toFixed(2) : '—';
+  $('stat-bidask').textContent = (price - 0.1).toFixed(2) + ' / ' + (price + 0.1).toFixed(2);
 
   const closes = klines.map(k => parseFloat(k[4]));
   const pred = buildPrediction(price, closes, klines);
@@ -895,7 +1110,7 @@ function renderUI(ticker, klines, bookTicker) {
         <span class="ind-name">${s.name}</span>
         <div class="ind-bar-wrap"><div class="ind-bar" style="width:${Math.round(s.bar * 100)}%;background:${barColor}"></div></div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:11px;font-family:var(--font-mono);color:var(--muted)">${s.value}</span>
+          <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);max-width:110px;text-align:right;">${s.note || s.value}</span>
           <span class="ind-signal sig-${s.signal}">${s.signal.toUpperCase()}</span>
         </div>
       </div>`;
@@ -930,6 +1145,16 @@ function renderUI(ticker, klines, bookTicker) {
   $('tradeBias').style.background = pred.bullish ? 'var(--green-dim)' : 'var(--red-dim)';
   $('tradeBias').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
 
+  $('tradeDuration').textContent = '⏱ ' + pred.durationLabel;
+
+  // R:R warning
+  $('rrWarning').style.display = pred.rrBelowMin ? 'block' : 'none';
+
+  // Trade quality
+  $('tradeQuality').textContent = pred.qualityLabel;
+  $('tradeQuality').style.color = pred.qualityColor;
+  $('tradeQualitySub').textContent = pred.qualityPct + '% score';
+
   $('entryVal').textContent = fmt(pred.entry);
   $('slVal').textContent = fmt(pred.sl);
   $('slPct').textContent = pred.riskPct.toFixed(2) + '% Risk Distance';
@@ -945,109 +1170,140 @@ function renderUI(ticker, klines, bookTicker) {
   $('rrLoss').style.width = lossFrac.toFixed(1) + '%';
   $('rrWin').style.width = (100 - lossFrac).toFixed(1) + '%';
 
-  $('atrVal').textContent = atr.toFixed(2);
+  $('atrVal').textContent = pred.atr.toFixed(2);
   $('volRatio').textContent = pred.volRatio.toFixed(2) + 'x';
   $('volRatio').style.color = pred.volRatio > 1.5 ? 'var(--green)' : 'var(--text)';
   $('bbWidth').textContent = pred.bb.width.toFixed(2) + '%';
   $('momentumVal').textContent = (pred.roc4 >= 0 ? '+' : '') + pred.roc4.toFixed(2) + '%';
   $('momentumVal').style.color = pred.roc4 > 0 ? 'var(--green)' : 'var(--red)';
 
-  renderChart(klines, pred.targetPrice, pred);
+  $('lastUpdate').textContent = 'Live · ' + new Date().toLocaleTimeString();
+}
+
+// ── KLINE + TICKER FETCH (every 30 s) ────────────────────────
+async function fetchKlinesAndTicker() {
+  // Try Binance directly first (works in most browsers)
+  try {
+    const [klineRes, tickerRes] = await Promise.all([
+      fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60'),
+      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT')
+    ]);
+    if (klineRes.ok && tickerRes.ok) {
+      cachedKlines = await klineRes.json();
+      cachedTicker = await tickerRes.json();
+      return;
+    }
+  } catch (_) {}
+
+  // Fallback: allorigins proxy
+  try {
+    const proxyUrl = 'https://api.allorigins.win/get?url=';
+    const [klineRes, tickerRes] = await Promise.all([
+      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60')),
+      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT'))
+    ]);
+    if (klineRes.ok && tickerRes.ok) {
+      const kd = await klineRes.json();
+      const td = await tickerRes.json();
+      cachedKlines = JSON.parse(kd.contents);
+      cachedTicker = JSON.parse(td.contents);
+      return;
+    }
+  } catch (_) {}
+
+  throw new Error('All kline sources failed');
+}
+
+// ── WEBSOCKET for real-time price tick ───────────────────────
+let ws = null;
+function connectWebSocket() {
+  if (ws) { try { ws.close(); } catch(_){} }
+  // Binance WebSocket: mini-ticker gives price, high, low, vol every ~1s
+  ws = new WebSocket('wss://stream.binance.com:9443/ws/paxgusdt@miniTicker');
+
+  ws.onopen = () => {
+    $('autoRefresh').textContent = '🔴 LIVE stream active';
+    $('errorMsg').style.display = 'none';
+    clearTimeout(wsReconnectTimer);
+  };
+
+  ws.onmessage = (evt) => {
+    try {
+      const d = JSON.parse(evt.data);
+      // d.c = last price, d.h = 24h high, d.l = 24h low, d.o = open, d.v = volume, d.P = % change
+      livePrice = parseFloat(d.c);
+
+      // Patch the cached ticker with real-time fields so trade tips use live price
+      if (cachedTicker) {
+        cachedTicker.lastPrice         = d.c;
+        cachedTicker.highPrice         = d.h;
+        cachedTicker.lowPrice          = d.l;
+        cachedTicker.openPrice         = d.o;
+        cachedTicker.volume            = d.v;
+        cachedTicker.priceChangePercent= d.P;
+        cachedTicker.priceChange       = (parseFloat(d.c) - parseFloat(d.o)).toFixed(2);
+      }
+
+      // Update price hero + recalculate trade tips on every tick
+      if (cachedTicker && cachedKlines) {
+        renderUI(cachedTicker, cachedKlines);
+      }
+    } catch(_) {}
+  };
+
+  ws.onerror = () => {};
+  ws.onclose = () => {
+    $('autoRefresh').textContent = '⚠ Stream closed – reconnecting…';
+    // Reconnect after 3 seconds
+    wsReconnectTimer = setTimeout(connectWebSocket, 3000);
+  };
+}
+
+// ── FULL REFRESH (klines + ticker, every 30 s) ───────────────
+async function refreshKlines() {
+  try {
+    await fetchKlinesAndTicker();
+    // If WebSocket is NOT connected (e.g. blocked), also render from ticker
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      renderUI(cachedTicker, cachedKlines);
+    }
+    $('errorMsg').style.display = 'none';
+  } catch (err) {
+    $('errorMsg').style.display = 'block';
+    $('errorMsg').textContent = '⚠ Kline data fetch failed – price display may lag.';
+  }
+}
+
+// ── MANUAL REFRESH ───────────────────────────────────────────
+async function manualRefresh() {
+  const btn = $('refreshBtn');
+  btn.classList.add('loading');
+  await refreshKlines();
+  btn.classList.remove('loading');
   $('lastUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
 
-async function fetchData() {
-  try {
-    // We use an open, unblocked financial engine proxy to get historical 1h gold bars 
-    // This bypasses the browser CORS network block completely.
-    const proxyUrl = "https://api.allorigins.win/get?url=";
-    const targetBinanceUrl = encodeURIComponent("https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60");
-    const targetTickerUrl = encodeURIComponent("https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT");
-    
-    const [klineRes, tickerRes] = await Promise.all([
-      fetch(`${proxyUrl}${targetBinanceUrl}`),
-      fetch(`${proxyUrl}${targetTickerUrl}`)
-    ]);
-
-    if (!klineRes.ok || !tickerRes.ok) throw new Error('Proxy routing failure');
-    
-    const klineData = await klineRes.json();
-    const tickerData = await tickerRes.json();
-    
-    // Parse out the nested string objects from the browser proxy wrapper
-    const klines = JSON.parse(klineData.contents);
-    const ticker = JSON.parse(tickerData.contents);
-    const book = { bidPrice: parseFloat(ticker.lastPrice) - 0.15, askPrice: parseFloat(ticker.lastPrice) + 0.15 };
-
-    return { ticker, klines, book };
-  } catch (error) {
-    console.error("Primary proxy blocked, falling back to backup public pipeline...", error);
-    
-    // BACKUP PIPELINE: If the server proxy drops, pull instant pricing from CoinGecko Public Markets
-    const backupRes = await fetch("https://api.coingecko.com/api/v3/coins/pax-gold");
-    if (!backupRes.ok) throw new Error("All data pipelines obstructed.");
-    
-    const cg = await backupRes.json();
-    const currentPrice = cg.market_data.current_price.usd;
-    
-    // Generate an artificial candle baseline array locally so your mathematical technical chart 
-    // doesn't crash if the external server is down
-    const mockKlines = [];
-    let basePrice = currentPrice - 15;
-    for(let i=0; i<60; i++) {
-      basePrice += (Math.random() - 0.49) * 2;
-      mockKlines.push([Date.now() - (60-i)*3600000, basePrice, basePrice+1, basePrice-1, basePrice, 100]);
-    }
-    
-    const mockTicker = {
-      lastPrice: currentPrice,
-      priceChangePercent: cg.market_data.price_change_percentage_24h || 0,
-      priceChange: cg.market_data.price_change_24h || 0,
-      highPrice: cg.market_data.high_24h.usd || currentPrice,
-      lowPrice: cg.market_data.low_24h.usd || currentPrice,
-      openPrice: currentPrice - (cg.market_data.price_change_24h || 0),
-      volume: cg.market_data.total_volume.usd / currentPrice
-    };
-    
-    return { ticker: mockTicker, klines: mockKlines, book: null };
-  }
-}
-
-let refreshTimer = null;
-let countdown = 60;
-
-function startCountdown() {
-  countdown = 60;
-  clearInterval(refreshTimer);
-  refreshTimer = setInterval(() => {
-    countdown--;
-    $('autoRefresh').textContent = 'Auto-refresh: ' + countdown + 's';
-    if (countdown <= 0) fetchAndRender();
-  }, 1000);
-}
-
-async function fetchAndRender() {
+// ── INIT ─────────────────────────────────────────────────────
+(async () => {
+  // 1. Load klines first so we can render immediately
   const btn = $('refreshBtn');
   btn.classList.add('loading');
-  $('errorMsg').style.display = 'none';
   try {
-    const { ticker, klines, book } = await fetchData();
-    renderUI(ticker, klines, book);
-    startCountdown();
-  } catch (err) {
+    await fetchKlinesAndTicker();
+    renderUI(cachedTicker, cachedKlines);
+  } catch(e) {
     $('errorMsg').style.display = 'block';
-    $('errorMsg').textContent = '⚠ Network connection error syncing public live gold stream.';
+    $('errorMsg').textContent = '⚠ Initial data load failed. Check connection.';
   } finally {
     btn.classList.remove('loading');
   }
-}
 
-function manualRefresh() {
-  clearInterval(refreshTimer);
-  fetchAndRender();
-}
+  // 2. Open WebSocket for live price ticks
+  connectWebSocket();
 
-fetchAndRender();
+  // 3. Refresh klines every 30 seconds (candles don't change every second)
+  klineRefreshTimer = setInterval(refreshKlines, 30000);
+})();
 </script>
 </body>
 </html>
