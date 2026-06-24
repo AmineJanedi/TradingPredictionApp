@@ -494,67 +494,100 @@
       <div class="card-title" style="margin-bottom:0">TRADINGVIEW LIVE INTRA-DAY ENGINE</div>
     </div>
     <div style="height: 400px; width:100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
-    <!-- TradingView Widget BEGIN -->
-<div class="tradingview-widget-container">
-  <div class="tradingview-widget-container__widget"></div>
-  <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/XAUUSD/?exchange=OANDA" rel="noopener nofollow" target="_blank"><span class="blue-text">XAUUSD quote</span></a><span class="trademark">&nbsp;by TradingView</span></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
-  {
-  "lineWidth": 2,
-  "lineType": 0,
-  "chartType": "candlesticks",
-  "fontColor": "rgb(106, 109, 120)",
-  "gridLineColor": "rgba(242, 242, 242, 0.06)",
-  "volumeUpColor": "rgba(34, 171, 148, 0.5)",
-  "volumeDownColor": "rgba(247, 82, 95, 0.5)",
-  "backgroundColor": "#0F0F0F",
-  "widgetFontColor": "#DBDBDB",
-  "upColor": "#22ab94",
-  "downColor": "#f7525f",
-  "borderUpColor": "#22ab94",
-  "borderDownColor": "#f7525f",
-  "wickUpColor": "#22ab94",
-  "wickDownColor": "#f7525f",
-  "colorTheme": "dark",
-  "isTransparent": false,
-  "locale": "en",
-  "chartOnly": false,
-  "scalePosition": "right",
-  "scaleMode": "Normal",
-  "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
-  "valuesTracking": "1",
-  "changeMode": "price-and-percent",
-  "symbols": [
-    [
-      "OANDA:XAUUSD|1D"
-    ]
-  ],
-  "dateRanges": [
-    "1d|60",
-    "1m|30",
-    "3m|60",
-    "12m|1D",
-    "60m|1W",
-    "all|1M"
-  ],
-  "fontSize": "10",
-  "headerFontSize": "medium",
-  "autosize": true,
-  "width": "100%",
-  "height": "100%",
-  "noTimeScale": false,
-  "hideDateRanges": false,
-  "showMA": true,
-  "maLength": 9,
-  "maLineColor": "#2962FF",
-  "maLineWidth": 1,
-  "hideMarketStatus": false,
-  "hideSymbolLogo": false
-}
-  </script>
-</div>
-<!-- TradingView Widget END -->
+      <div class="tradingview-widget-container" style="height:100%; width:100%;">
+        <div class="tradingview-widget-container__widget" style="height:calc(100% - 22px); width:100%;"></div>
+        <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/XAUUSD/?exchange=OANDA" rel="noopener nofollow" target="_blank"><span class="blue-text">XAUUSD quote</span></a><span class="trademark">&nbsp;by TradingView</span></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+        {
+        "lineWidth": 2,
+        "lineType": 0,
+        "chartType": "candlesticks",
+        "fontColor": "rgb(106, 109, 120)",
+        "gridLineColor": "rgba(242, 242, 242, 0.06)",
+        "volumeUpColor": "rgba(34, 171, 148, 0.5)",
+        "volumeDownColor": "rgba(247, 82, 95, 0.5)",
+        "backgroundColor": "#0F0F0F",
+        "widgetFontColor": "#DBDBDB",
+        "upColor": "#22ab94",
+        "downColor": "#f7525f",
+        "borderUpColor": "#22ab94",
+        "borderDownColor": "#f7525f",
+        "wickUpColor": "#22ab94",
+        "wickDownColor": "#f7525f",
+        "colorTheme": "dark",
+        "isTransparent": false,
+        "locale": "en",
+        "chartOnly": false,
+        "scalePosition": "right",
+        "scaleMode": "Normal",
+        "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+        "valuesTracking": "1",
+        "changeMode": "price-and-percent",
+        "symbols": [
+          [
+            "OANDA:XAUUSD|1h"
+          ]
+        ],
+        "dateRanges": [
+          "1d|60",
+          "5d|60",
+          "1m|240",
+          "3m|1D",
+          "12m|1W",
+          "all|1M"
+        ],
+        "fontSize": "10",
+        "headerFontSize": "medium",
+        "autosize": true,
+        "width": "100%",
+        "height": "100%",
+        "noTimeScale": false,
+        "hideDateRanges": false,
+        "hideMarketStatus": false,
+        "hideSymbolLogo": false
+      }
+        </script>
       </div>
+      </div>
+  </div>
+
+  <!-- 4H TREND CONTEXT PANEL -->
+  <div class="card" style="margin-bottom:20px;border-color:rgba(88,166,255,0.2);background:linear-gradient(135deg,var(--bg2) 0%,rgba(88,166,255,0.03) 100%);">
+    <div class="card-title" style="color:var(--blue);">4H TREND CONTEXT <span style="font-size:9px;color:var(--muted);margin-left:6px;font-weight:400;">Higher timeframe filter — 1H signals only taken in direction of 4H trend</span></div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex-wrap:wrap;" id="htfGrid">
+      <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">4H TREND</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);" id="htfTrend">—</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfTrendNote">loading…</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">4H RSI(14)</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);" id="htfRsi">—</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfRsiNote">—</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">4H EMA20/50</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);" id="htfEma">—</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfEmaNote">—</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">4H MACD</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);" id="htfMacd">—</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfMacdNote">—</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
+        <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">ALIGNMENT</div>
+        <div style="font-size:18px;font-weight:700;font-family:var(--font-mono);" id="htfAlign">—</div>
+        <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfAlignNote">—</div>
+      </div>
+    </div>
+    <!-- Conflict warning -->
+    <div id="htfConflict" style="display:none;margin-top:14px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.25);border-radius:8px;padding:10px 14px;font-size:11px;font-family:var(--font-mono);color:var(--red);">
+      🚫 <strong>Trend conflict:</strong> 1H signal opposes 4H trend — trade is counter-trend. Higher risk, reduce position size or skip.
+    </div>
+    <div id="htfAligned" style="display:none;margin-top:14px;background:rgba(63,185,80,0.08);border:1px solid rgba(63,185,80,0.2);border-radius:8px;padding:10px 14px;font-size:11px;font-family:var(--font-mono);color:var(--green);">
+      ✅ <strong>Trend aligned:</strong> 1H signal agrees with 4H trend — higher probability setup.
+    </div>
   </div>
 
   <div class="trade-setup" id="tradeSetup">
@@ -701,6 +734,7 @@ const pctDiff = (a,b) => ((a-b)/b*100);
 
 // ── GLOBAL CACHE ──────────────────────────────────────────────
 let cachedKlines = null;       // 1h candles, refreshed every 30s
+let cached4hKlines = null;     // 4h candles, refreshed every 30s
 let cachedTicker = null;       // 24h stats, refreshed every 30s
 let livePrice   = null;        // updated every WebSocket tick
 let wsReconnectTimer = null;
@@ -875,7 +909,7 @@ function detectVolDivergence(closes, klines, lookback = 5) {
 }
 
 // ── MAIN PREDICTION ENGINE (fixed) ───────────────────────────
-function buildPrediction(price, closes, klines) {
+function buildPrediction(price, closes, klines, htfContext) {
   const rsi      = calcRSI(closes);
   const { macd, signal: macdSig, histogram } = calcMACD(closes);
   const bb       = calcBB(closes);
@@ -981,6 +1015,26 @@ function buildPrediction(price, closes, klines) {
   else if (roc4 < -0.15) { score -= 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'sell',    bar: Math.max(0.5+roc4/2,0), note: '4-bar ROC bearish' }); }
   else                   {             signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'neutral', bar: 0.5, note: 'Flat momentum' }); }
 
+  // ── 4H TREND FILTER — adjusts score and risk parameters ──────
+  // Aligned with 4H: boost score slightly + tighten SL (higher conviction)
+  // Against 4H: penalise score + widen SL (counter-trend = more risk)
+  let htfBoost = 0;
+  let htfSlAdj = 1.0;   // multiplier on SL distance
+  let htfConfAdj = 0;   // flat adjustment to confidence %
+  if (htfContext && !htfContext.htfNeutral) {
+    const aligned = htfContext.htfBull === (score >= 0);
+    if (aligned) {
+      htfBoost    =  maxScore * 0.12;  // +12% of maxScore bonus
+      htfSlAdj    =  0.90;             // SL 10% tighter
+      htfConfAdj  = +8;                // +8% confidence
+    } else {
+      htfBoost    = -maxScore * 0.18;  // -18% penalty (counter-trend is riskier)
+      htfSlAdj    =  1.25;             // SL 25% wider
+      htfConfAdj  = -12;               // -12% confidence
+    }
+  }
+  score += htfBoost;
+
   // ── SCORE NORMALISATION ──
   const normalizedScore = score / maxScore;
   const bullish  = normalizedScore >= 0;
@@ -991,8 +1045,8 @@ function buildPrediction(price, closes, klines) {
   const targetPrice   = price + (atr * atrMultiplier * (bullish ? 1 : -1));
 
   // ── SL / TP — strength-scaled R:R (minimum 1:1.5 enforced) ──
-  // SL: tighter on high-strength signals, looser on weak ones
-  const slMult  = strength > 0.6 ? 1.2 : strength > 0.3 ? 1.5 : 1.8;
+  // SL: tighter on high-strength signals, looser on weak ones; adjusted by 4H alignment
+  const slMult  = (strength > 0.6 ? 1.2 : strength > 0.3 ? 1.5 : 1.8) * htfSlAdj;
   // TP1: always gives at least 1:1.5 R:R
   const tp1Mult = slMult * 1.6;   // ≥ 1:1.6 by construction
   // TP2: scales with strength — stronger signal = wider target
@@ -1017,8 +1071,8 @@ function buildPrediction(price, closes, klines) {
   const sells = signals.filter(s => s.signal === 'sell').length;
   const neuts = signals.filter(s => s.signal === 'neutral').length;
   const agreementRatio = Math.abs(buys - sells) / signals.length;  // 0–1
-  // Weighted: 60% agreement, 40% normalized score strength
-  const confidence = Math.round(Math.min(95, 35 + agreementRatio * 40 + strength * 25));
+  // Weighted: 60% agreement, 40% normalized score strength; clamped; 4H adjustment applied
+  const confidence = Math.round(Math.min(95, Math.max(20, 35 + agreementRatio * 40 + strength * 25 + htfConfAdj)));
 
   // ── TRADE QUALITY SCORE ──
   // Combines R:R quality, signal strength, and whether indicators agree
@@ -1074,7 +1128,7 @@ function flashEl(el, dir) {
 }
 
 let prevPrice = null;
-function renderUI(ticker, klines) {
+function renderUI(ticker, klines, klines4h) {
   const price = parseFloat(ticker.lastPrice);
   const change = parseFloat(ticker.priceChangePercent);
   const changeAbs = parseFloat(ticker.priceChange);
@@ -1101,7 +1155,94 @@ function renderUI(ticker, klines) {
   $('stat-bidask').textContent = (price - 0.1).toFixed(2) + ' / ' + (price + 0.1).toFixed(2);
 
   const closes = klines.map(k => parseFloat(k[4]));
-  const pred = buildPrediction(price, closes, klines);
+
+  // ── 4H TREND ANALYSIS ────────────────────────────────────────
+  let htfContext = null;
+  if (klines4h && klines4h.length >= 26) {
+    const closes4h  = klines4h.map(k => parseFloat(k[4]));
+    const rsi4h     = calcRSI(closes4h);
+    const ema20_4h  = calcEMA(closes4h, 20);
+    const ema50_4h  = calcEMA(closes4h, 50);
+    const { macd: macd4h, signal: macdSig4h, histogram: hist4h } = calcMACD(closes4h);
+
+    // 4H trend direction score (-3 to +3)
+    let htfScore = 0;
+    // EMA cross
+    if (ema20_4h > ema50_4h * 1.001) htfScore += 1;
+    else if (ema20_4h < ema50_4h * 0.999) htfScore -= 1;
+    // Price vs EMA50
+    if (price > ema50_4h * 1.001) htfScore += 1;
+    else if (price < ema50_4h * 0.999) htfScore -= 1;
+    // MACD
+    if (macd4h > macdSig4h && hist4h > 0) htfScore += 1;
+    else if (macd4h < macdSig4h && hist4h < 0) htfScore -= 1;
+
+    const htfBull = htfScore > 0;
+    const htfNeutral = htfScore === 0;
+
+    // RSI zone label
+    let rsiNote = 'Mid range';
+    let rsiColor = 'var(--text)';
+    if (rsi4h < 30)       { rsiNote = 'Oversold';   rsiColor = 'var(--green)'; }
+    else if (rsi4h < 45)  { rsiNote = 'Weak';        rsiColor = '#64d08a'; }
+    else if (rsi4h > 70)  { rsiNote = 'Overbought';  rsiColor = 'var(--red)'; }
+    else if (rsi4h > 55)  { rsiNote = 'Strong';      rsiColor = 'var(--green)'; }
+
+    // EMA alignment label
+    const emaCrossLabel = ema20_4h > ema50_4h ? 'Golden ↑' : ema20_4h < ema50_4h ? 'Death ↓' : 'Flat —';
+    const emaCrossColor = ema20_4h > ema50_4h ? 'var(--green)' : ema20_4h < ema50_4h ? 'var(--red)' : 'var(--amber)';
+
+    // MACD label
+    const macdLabel = (macd4h > macdSig4h && hist4h > 0) ? 'Bull ↑' :
+                      (macd4h < macdSig4h && hist4h < 0) ? 'Bear ↓' :
+                      (macd4h > macdSig4h) ? 'Fading Bull' : 'Fading Bear';
+    const macdColor = macd4h > macdSig4h ? 'var(--green)' : 'var(--red)';
+
+    // Overall trend label
+    const trendLabel = htfNeutral ? 'Neutral ↔' : htfBull ? (htfScore >= 2 ? 'Uptrend ↑↑' : 'Mild Up ↑') : (htfScore <= -2 ? 'Downtrend ↓↓' : 'Mild Down ↓');
+    const trendColor = htfNeutral ? 'var(--amber)' : htfBull ? 'var(--green)' : 'var(--red)';
+    const trendNote  = `4H score: ${htfScore > 0 ? '+' : ''}${htfScore}/3`;
+
+    // Alignment with 1h signal (determined after buildPrediction — store for later)
+    htfContext = { htfBull, htfNeutral, htfScore, trendLabel, trendColor, trendNote, rsi4h, rsiNote, rsiColor, emaCrossLabel, emaCrossColor, macdLabel, macdColor };
+
+    // Render 4h panel
+    const htfTrendEl = $('htfTrend');
+    htfTrendEl.textContent = trendLabel;
+    htfTrendEl.style.color = trendColor;
+    $('htfTrendNote').textContent = trendNote;
+
+    const htfRsiEl = $('htfRsi');
+    htfRsiEl.textContent = rsi4h.toFixed(1);
+    htfRsiEl.style.color = rsiColor;
+    $('htfRsiNote').textContent = rsiNote;
+
+    const htfEmaEl = $('htfEma');
+    htfEmaEl.textContent = emaCrossLabel;
+    htfEmaEl.style.color = emaCrossColor;
+    $('htfEmaNote').textContent = `EMA20 ${ema20_4h > ema50_4h ? '>' : '<'} EMA50`;
+
+    const htfMacdEl = $('htfMacd');
+    htfMacdEl.textContent = macdLabel;
+    htfMacdEl.style.color = macdColor;
+    $('htfMacdNote').textContent = `Hist: ${hist4h >= 0 ? '+' : ''}${hist4h.toFixed(2)}`;
+  }
+
+  const pred = buildPrediction(price, closes, klines, htfContext);
+
+  // ── 4H ALIGNMENT PANEL ───────────────────────────────────────
+  if (htfContext) {
+    const aligned = (!htfContext.htfNeutral) && (htfContext.htfBull === pred.bullish);
+    const conflict = (!htfContext.htfNeutral) && (htfContext.htfBull !== pred.bullish);
+
+    $('htfConflict').style.display = conflict ? 'block' : 'none';
+    $('htfAligned').style.display  = aligned  ? 'block' : 'none';
+
+    const alignEl = $('htfAlign');
+    if (aligned)              { alignEl.textContent = '✅ Aligned';  alignEl.style.color = 'var(--green)'; $('htfAlignNote').textContent = '1H + 4H agree'; }
+    else if (conflict)        { alignEl.textContent = '🚫 Conflict'; alignEl.style.color = 'var(--red)';   $('htfAlignNote').textContent = 'Counter-trend'; }
+    else                      { alignEl.textContent = '— Neutral';   alignEl.style.color = 'var(--amber)'; $('htfAlignNote').textContent = '4H undecided'; }
+  }
 
   $('indList').innerHTML = pred.signals.map(s => {
     const barColor = s.signal === 'buy' ? '#3fb950' : s.signal === 'sell' ? '#f85149' : '#d29922';
@@ -1184,13 +1325,15 @@ function renderUI(ticker, klines) {
 async function fetchKlinesAndTicker() {
   // Try Binance directly first (works in most browsers)
   try {
-    const [klineRes, tickerRes] = await Promise.all([
+    const [klineRes, kline4hRes, tickerRes] = await Promise.all([
       fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60'),
+      fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=60'),
       fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT')
     ]);
-    if (klineRes.ok && tickerRes.ok) {
-      cachedKlines = await klineRes.json();
-      cachedTicker = await tickerRes.json();
+    if (klineRes.ok && kline4hRes.ok && tickerRes.ok) {
+      cachedKlines    = await klineRes.json();
+      cached4hKlines  = await kline4hRes.json();
+      cachedTicker    = await tickerRes.json();
       return;
     }
   } catch (_) {}
@@ -1198,15 +1341,18 @@ async function fetchKlinesAndTicker() {
   // Fallback: allorigins proxy
   try {
     const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const [klineRes, tickerRes] = await Promise.all([
+    const [klineRes, kline4hRes, tickerRes] = await Promise.all([
       fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60')),
+      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=60')),
       fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT'))
     ]);
-    if (klineRes.ok && tickerRes.ok) {
-      const kd = await klineRes.json();
-      const td = await tickerRes.json();
-      cachedKlines = JSON.parse(kd.contents);
-      cachedTicker = JSON.parse(td.contents);
+    if (klineRes.ok && kline4hRes.ok && tickerRes.ok) {
+      const kd   = await klineRes.json();
+      const k4d  = await kline4hRes.json();
+      const td   = await tickerRes.json();
+      cachedKlines   = JSON.parse(kd.contents);
+      cached4hKlines = JSON.parse(k4d.contents);
+      cachedTicker   = JSON.parse(td.contents);
       return;
     }
   } catch (_) {}
@@ -1246,7 +1392,7 @@ function connectWebSocket() {
 
       // Update price hero + recalculate trade tips on every tick
       if (cachedTicker && cachedKlines) {
-        renderUI(cachedTicker, cachedKlines);
+        renderUI(cachedTicker, cachedKlines, cached4hKlines);
       }
     } catch(_) {}
   };
@@ -1265,7 +1411,7 @@ async function refreshKlines() {
     await fetchKlinesAndTicker();
     // If WebSocket is NOT connected (e.g. blocked), also render from ticker
     if (!ws || ws.readyState !== WebSocket.OPEN) {
-      renderUI(cachedTicker, cachedKlines);
+      renderUI(cachedTicker, cachedKlines, cached4hKlines);
     }
     $('errorMsg').style.display = 'none';
   } catch (err) {
@@ -1290,7 +1436,7 @@ async function manualRefresh() {
   btn.classList.add('loading');
   try {
     await fetchKlinesAndTicker();
-    renderUI(cachedTicker, cachedKlines);
+    renderUI(cachedTicker, cachedKlines, cached4hKlines);
   } catch(e) {
     $('errorMsg').style.display = 'block';
     $('errorMsg').textContent = '⚠ Initial data load failed. Check connection.';
