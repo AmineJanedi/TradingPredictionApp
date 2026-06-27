@@ -119,7 +119,31 @@
     50% { opacity: 0.6; box-shadow: 0 0 0 4px transparent; }
   }
 
-  .refresh-btn {
+  .control-panel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg3);
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .duration-select {
+    background: var(--bg4);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+  }
+  .duration-select:focus { border-color: var(--accent); }
+
+  .predict-btn {
     display: flex; align-items: center; gap: 8px;
     background: var(--accent);
     color: #090c10;
@@ -133,13 +157,25 @@
     transition: all 0.2s;
     letter-spacing: 0.3px;
   }
+  .predict-btn:hover { background: #ffd966; transform: translateY(-1px); }
+  .predict-btn:active { transform: translateY(0) scale(0.98); }
+  .predict-btn.frozen { background: var(--blue); color: #090c10; }
 
-  .refresh-btn:hover { background: #ffd966; transform: translateY(-1px); }
-  .refresh-btn:active { transform: translateY(0) scale(0.98); }
-  .refresh-btn.loading { opacity: 0.7; pointer-events: none; }
+  .refresh-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { color: var(--text); background: var(--bg4); }
 
   .refresh-icon { font-size: 14px; transition: transform 0.6s; }
-  .refresh-btn.loading .refresh-icon { animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .last-update { font-size: 11px; color: var(--muted); font-family: var(--font-mono); }
@@ -268,6 +304,11 @@
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .trade-setup.is-frozen {
+    border-color: var(--blue);
   }
 
   .trade-setup::before {
@@ -290,6 +331,10 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     display: flex; align-items: center; gap: 8px;
+  }
+
+  .trade-setup.is-frozen .trade-title {
+    color: var(--blue);
   }
 
   .trade-bias {
@@ -413,7 +458,6 @@
   @keyframes flashUp { 0%,100%{color:inherit} 30%{color:var(--green)} }
   @keyframes flashDown { 0%,100%{color:inherit} 30%{color:var(--red)} }
 
-  /* Style override for clean integration of the tradingview elements */
   .tradingview-widget-copyright {
     font-size: 10px !important;
     font-family: var(--font-mono) !important;
@@ -435,17 +479,29 @@
       <div class="logo-mark">Au</div>
       <div>
         <div class="header-title">Gold Intelligence</div>
-        <div class="header-sub">Real-time trading dashboard · 1h prediction engine</div>
+        <div class="header-sub">Real-time trading dashboard · calibrated execution platform</div>
       </div>
     </div>
     <div class="header-right">
+      <div class="control-panel">
+        <select class="duration-select" id="tradeDurationSelect">
+          <option value="15 min">Expiry: 15 Mins</option>
+          <option value="30 min">Expiry: 30 Mins</option>
+          <option value="1 hour" selected>Expiry: 1 Hour</option>
+          <option value="4 hours">Expiry: 4 Hours</option>
+          <option value="24 hours">Expiry: 24 Hours</option>
+        </select>
+        <button class="predict-btn" id="predictBtn" onclick="triggerFixedPrediction()">
+          ⚡ Give Prediction
+        </button>
+      </div>
       <div class="live-badge"><div class="live-dot"></div>MARKET LIVE</div>
       <div>
         <div class="last-update" id="lastUpdate">Not loaded yet</div>
-        <div style="font-size:10px; color:var(--muted2); font-family:var(--font-mono); margin-top:2px;" id="autoRefresh">Auto-refresh: 60s</div>
+        <div style="font-size:10px; color:var(--muted2); font-family:var(--font-mono); margin-top:2px;" id="autoRefresh">Stream active</div>
       </div>
       <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">
-        <span class="refresh-icon">↻</span> Refresh Metrics
+        <span class="refresh-icon">↻</span> Metrics
       </button>
     </div>
   </header>
@@ -454,7 +510,7 @@
 
   <div class="price-hero">
     <div class="price-main">
-      <div class="price-label">GOLD / USD · SPOT (PAXG) &nbsp;·&nbsp; <span style="color:var(--green);font-weight:700;">⬤ LIVE STREAM</span></div>
+      <div class="price-label">PAXG / USD · GOLD PROXY &nbsp;·&nbsp; <span style="color:var(--green);font-weight:700;">⬤ LIVE STREAM</span></div>
       <div class="price-value" id="priceValue">$—</div>
       <div class="price-change-row">
         <span class="price-change" id="priceChange">—</span>
@@ -491,7 +547,7 @@
 
   <div class="chart-card">
     <div class="chart-header" style="margin-bottom: 12px;">
-      <div class="card-title" style="margin-bottom:0">TRADINGVIEW LIVE INTRA-DAY ENGINE</div>
+      <div class="card-title" style="margin-bottom:0">TRADINGVIEW XAUUSD REFERENCE CHART</div>
     </div>
     <div style="height: 400px; width:100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
       <div class="tradingview-widget-container" style="height:100%; width:100%;">
@@ -553,7 +609,7 @@
 
   <!-- 4H TREND CONTEXT PANEL -->
   <div class="card" style="margin-bottom:20px;border-color:rgba(88,166,255,0.2);background:linear-gradient(135deg,var(--bg2) 0%,rgba(88,166,255,0.03) 100%);">
-    <div class="card-title" style="color:var(--blue);">4H TREND CONTEXT <span style="font-size:9px;color:var(--muted);margin-left:6px;font-weight:400;">Higher timeframe filter — 1H signals only taken in direction of 4H trend</span></div>
+    <div class="card-title" style="color:var(--blue);">4H TREND CONTEXT <span style="font-size:9px;color:var(--muted);margin-left:6px;font-weight:400;">Higher timeframe filter — Signals calculated in directional harmony</span></div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;flex-wrap:wrap;" id="htfGrid">
       <div style="background:var(--bg3);border-radius:10px;padding:14px 16px;border:1px solid var(--border);">
         <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:6px;">4H TREND</div>
@@ -581,33 +637,31 @@
         <div style="font-size:10px;font-family:var(--font-mono);color:var(--muted);margin-top:3px;" id="htfAlignNote">—</div>
       </div>
     </div>
-    <!-- Conflict warning -->
     <div id="htfConflict" style="display:none;margin-top:14px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.25);border-radius:8px;padding:10px 14px;font-size:11px;font-family:var(--font-mono);color:var(--red);">
-      🚫 <strong>Trend conflict:</strong> 1H signal opposes 4H trend — trade is counter-trend. Higher risk, reduce position size or skip.
+      🚫 <strong>Trend conflict:</strong> Counter-trend structural conditions identified. Exercise caution.
     </div>
     <div id="htfAligned" style="display:none;margin-top:14px;background:rgba(63,185,80,0.08);border:1px solid rgba(63,185,80,0.2);border-radius:8px;padding:10px 14px;font-size:11px;font-family:var(--font-mono);color:var(--green);">
-      ✅ <strong>Trend aligned:</strong> 1H signal agrees with 4H trend — higher probability setup.
+      ✅ <strong>Trend aligned:</strong> Signal execution aligns with macro timeframe directional vector.
     </div>
   </div>
 
   <div class="trade-setup" id="tradeSetup">
     <div class="trade-header">
-      <div class="trade-title">⚡ Trade Setup · 1H Prediction</div>
+      <div class="trade-title" id="tradeTitleLabel">⚡ Live Analysis Engine</div>
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);">⏱ EST. DURATION</span>
+        <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);">⏱ TARGET METRIC DURATION</span>
         <span class="trade-bias" id="tradeDuration" style="font-size:12px;font-family:var(--font-mono);font-weight:700;padding:4px 12px;border-radius:6px;background:var(--blue-dim);color:var(--blue);">—</span>
         <span class="trade-bias" id="tradeBias">—</span>
       </div>
     </div>
-    <!-- Low R:R warning banner -->
     <div id="rrWarning" style="display:none;background:rgba(210,153,34,0.1);border:1px solid rgba(210,153,34,0.3);border-radius:8px;padding:8px 14px;margin-bottom:14px;font-size:11px;font-family:var(--font-mono);color:var(--amber);">
-      ⚠ R:R below minimum threshold (1:1.5) — trade setup not recommended
+      ⚠ Aggressive market conditions detected — match risk profile accordingly
     </div>
     <div class="trade-grid" style="grid-template-columns:repeat(5,1fr);">
       <div class="trade-box entry-box">
         <div class="trade-box-label">ENTRY ZONE</div>
         <div class="trade-box-val" id="entryVal">—</div>
-        <div class="trade-box-sub" style="color:var(--muted)">Current market</div>
+        <div class="trade-box-sub" style="color:var(--muted)" id="entryZoneSub">Current market</div>
       </div>
       <div class="trade-box sl-box">
         <div class="trade-box-label">STOP LOSS</div>
@@ -639,9 +693,9 @@
       <div class="rr-win" id="rrWin" style="width:50%"></div>
     </div>
     <div class="rr-labels">
-      <span>Risk</span>
+      <span>Risk Matrix</span>
       <span id="rrNote">—</span>
-      <span>Reward</span>
+      <span>Reward Matrix</span>
     </div>
   </div>
 
@@ -673,7 +727,7 @@
       <div style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-top:6px;" id="verdictNote">—</div>
 
       <div style="margin-top:20px;">
-        <div class="card-title">1h Prediction Target</div>
+        <div class="card-title">Bias Target Output</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid var(--border);">
             <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;">PREDICTED PRICE</div>
@@ -683,11 +737,11 @@
           <div style="background:var(--bg3);border-radius:8px;padding:12px;border:1px solid var(--border);">
             <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;">CONFIDENCE</div>
             <div style="font-size:22px;font-weight:700;font-family:var(--font-mono);" id="predConf">—</div>
-            <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-top:2px;">model score</div>
+            <div style="font-size:11px;color:var(--muted);font-family:var(--font-mono);margin-top:2px;">model consensus</div>
           </div>
         </div>
         <div style="margin-top:10px;background:var(--bg3);border-radius:8px;padding:10px 12px;border:1px solid var(--border);">
-          <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;">BASIS</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--font-mono);margin-bottom:4px;">BASIS MATRIX</div>
           <div style="font-size:11px;font-family:var(--font-mono);color:var(--text);line-height:1.7;" id="predBasis">—</div>
         </div>
       </div>
@@ -718,134 +772,124 @@
   </div>
 
   <footer>
-    <p><strong>Charts:</strong> Embedded TradingView Interface Engine (OANDA Feed) · <strong>Metrics:</strong> Binance Unlocked Proxy Stream<br>
+    <p><strong>Charts:</strong> Embedded TradingView Interface Engine (OANDA Feed) · <strong>Metrics:</strong> Binance PAXGUSDT Proxy Stream<br>
     <strong>Disclaimer:</strong> This tool is for educational purposes only. Not financial advice. Commodity trading involves significant risk.</p>
-    <p style="text-align:right;"><strong>Engine:</strong> RSI · MACD · BB · EMA · Stoch · ATR · Volume · Momentum<br>Auto-refresh active · Press Refresh for instant update</p>
+    <p style="text-align:right;"><strong>Engine:</strong> RSI · MACD · BB · EMA · ADX · ATR · Volume · Structure<br>System optimized for dynamic tactical projection</p>
   </footer>
 
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
-const fmt = n => '$' + parseFloat(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-const fmtB = n => '$' + (n/1e6).toFixed(2) + 'M';
-const fmtVol = n => parseFloat(n).toLocaleString('en-US', {maximumFractionDigits:0});
-const pctDiff = (a,b) => ((a-b)/b*100);
+const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+const safeNum = (n, fallback = 0) => Number.isFinite(Number(n)) ? Number(n) : fallback;
+const fmt = n => '$' + safeNum(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtB = n => '$' + (safeNum(n) / 1e6).toFixed(2) + 'M';
+const fmtVol = n => safeNum(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+const pctDiff = (a, b) => b ? ((a - b) / b * 100) : 0;
+const mean = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
 
-// ── GLOBAL CACHE ──────────────────────────────────────────────
-let cachedKlines = null;       // 1h candles, refreshed every 30s
-let cached4hKlines = null;     // 4h candles, refreshed every 30s
-let cachedTicker = null;       // 24h stats, refreshed every 30s
-let livePrice   = null;        // updated every WebSocket tick
+// ── CACHE STATE & TRACKERS ────────────────────────────────────
+let cachedKlines = null;       
+let cached4hKlines = null;     
+let cachedTicker = null;       
+let cachedBook = null;         
+let livePrice = null;          
 let wsReconnectTimer = null;
 let klineRefreshTimer = null;
+let lastRenderAt = 0;
+let prevPrice = null;
+let ws = null;
 
-// TECHNICAL MATHEMATICS CORE
-function calcRSI(closes, period = 14) {
-  if (closes.length < period + 1) return 50;
-  let gains = 0, losses = 0;
-  for (let i = closes.length - period; i < closes.length; i++) {
-    const d = closes[i] - closes[i - 1];
-    if (d > 0) gains += d; else losses -= d;
-  }
-  let avgGain = gains / period;
-  let avgLoss = losses / period;
-  for (let i = closes.length - period + 1; i < closes.length; i++) {
-    const d = closes[i] - closes[i - 1];
-    avgGain = (avgGain * (period - 1) + Math.max(d, 0)) / period;
-    avgLoss = (avgLoss * (period - 1) + Math.max(-d, 0)) / period;
-  }
-  if (avgLoss === 0) return 100;
-  return 100 - 100 / (1 + (avgGain / avgLoss));
+// FREEZE ENGINE DATA STRUCTURES
+let isFrozen = false;
+let frozenPredictionData = null;
+
+// ── TECHNICAL MATHEMATICS CORE ────────────────────────────────
+function calcSMA(values, period) {
+  if (!values || values.length < period) return null;
+  return mean(values.slice(-period));
 }
 
-function calcEMA(closes, period) {
-  if (closes.length < period) return closes[closes.length - 1];
-  const k = 2 / (period + 1);
-  let ema = closes.slice(0, period).reduce((a, b) => a + b, 0) / period;
-  for (let i = period; i < closes.length; i++) {
-    ema = closes[i] * k + ema * (1 - k);
-  }
-  return ema;
+function calcEMA(values, period) {
+  const series = calcEMASeries(values, period).filter(v => v !== null);
+  return series.length ? series[series.length - 1] : safeNum(values?.[values.length - 1], 0);
 }
 
-function calcEMASeries(closes, period) {
+function calcEMASeries(values, period) {
+  const result = new Array(values.length).fill(null);
+  if (!values || values.length < period || period <= 0) return result;
   const k = 2 / (period + 1);
-  const result = new Array(closes.length).fill(null);
-  if (closes.length < period) return result;
-  let ema = closes.slice(0, period).reduce((a, b) => a + b, 0) / period;
+  let ema = mean(values.slice(0, period));
   result[period - 1] = ema;
-  for (let i = period; i < closes.length; i++) {
-    ema = closes[i] * k + ema * (1 - k);
+  for (let i = period; i < values.length; i++) {
+    ema = values[i] * k + ema * (1 - k);
     result[i] = ema;
   }
   return result;
 }
 
+function calcRSISeries(closes, period = 14) {
+  const rsi = new Array(closes.length).fill(null);
+  if (!closes || closes.length < period + 1) return rsi;
+
+  let gain = 0, loss = 0;
+  for (let i = 1; i <= period; i++) {
+    const d = closes[i] - closes[i - 1];
+    gain += Math.max(d, 0);
+    loss += Math.max(-d, 0);
+  }
+  let avgGain = gain / period;
+  let avgLoss = loss / period;
+  rsi[period] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+
+  for (let i = period + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1];
+    avgGain = (avgGain * (period - 1) + Math.max(d, 0)) / period;
+    avgLoss = (avgLoss * (period - 1) + Math.max(-d, 0)) / period;
+    rsi[i] = avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss));
+  }
+  return rsi;
+}
+
+function calcRSI(closes, period = 14) {
+  const valid = calcRSISeries(closes, period).filter(v => v !== null);
+  return valid.length ? valid[valid.length - 1] : 50;
+}
+
 function calcMACD(closes) {
   const ema12 = calcEMASeries(closes, 12);
   const ema26 = calcEMASeries(closes, 26);
-  const macdLine = closes.map((_, i) =>
-    ema12[i] !== null && ema26[i] !== null ? ema12[i] - ema26[i] : null
-  );
+  const macdLine = closes.map((_, i) => ema12[i] !== null && ema26[i] !== null ? ema12[i] - ema26[i] : null);
   const validMacd = macdLine.filter(v => v !== null);
-  const signalVal = calcEMA(validMacd, Math.min(9, validMacd.length));
-  const macdVal = macdLine[macdLine.length - 1] || 0;
-  return { macd: macdVal, signal: signalVal, histogram: macdVal - signalVal };
+  if (validMacd.length < 9) return { macd: 0, signal: 0, histogram: 0, prevHistogram: 0, slope: 0 };
+
+  const signalSeries = calcEMASeries(validMacd, 9).filter(v => v !== null);
+  const macd = validMacd[validMacd.length - 1];
+  const prevMacd = validMacd[validMacd.length - 2] ?? macd;
+  const signal = signalSeries[signalSeries.length - 1] ?? 0;
+  const prevSignal = signalSeries[signalSeries.length - 2] ?? signal;
+  const histogram = macd - signal;
+  const prevHistogram = prevMacd - prevSignal;
+  return { macd, signal, histogram, prevHistogram, slope: histogram - prevHistogram };
 }
 
 function calcBB(closes, period = 20, multiplier = 2) {
-  if (closes.length < period) return { upper: 0, lower: 0, mid: 0, width: 0 };
+  if (!closes || closes.length < period) return { upper: 0, lower: 0, mid: 0, width: 0, pos: 0.5 };
   const slice = closes.slice(-period);
-  const mean = slice.reduce((a, b) => a + b, 0) / period;
-  const variance = slice.reduce((s, v) => s + (v - mean) ** 2, 0) / period;
+  const mid = mean(slice);
+  const variance = mean(slice.map(v => (v - mid) ** 2));
   const std = Math.sqrt(variance);
-  const upper = mean + multiplier * std;
-  const lower = mean - multiplier * std;
-  return { upper, lower, mid: mean, width: ((upper - lower) / mean) * 100 };
+  const upper = mid + multiplier * std;
+  const lower = mid - multiplier * std;
+  const pos = upper === lower ? 0.5 : clamp((closes[closes.length - 1] - lower) / (upper - lower), 0, 1);
+  return { upper, lower, mid, width: mid ? ((upper - lower) / mid) * 100 : 0, pos };
 }
 
-function calcStochRSI(closes, period = 14) {
-  const rsis = [];
-  for (let i = period; i <= closes.length; i++) {
-    rsis.push(calcRSI(closes.slice(0, i), period));
-  }
-  if (rsis.length < period) return { k: 50, d: 50 };
-  const recentRSIs = rsis.slice(-period);
-  const minR = Math.min(...recentRSIs);
-  const maxR = Math.max(...recentRSIs);
-  const lastRSI = rsis[rsis.length - 1];
-  const rawK = maxR === minR ? 50 : ((lastRSI - minR) / (maxR - minR)) * 100;
-  return { k: rawK, d: rawK };
-}
+function calcStochRSI(closes, rsiPeriod = 14, stochPeriod = 14, smoothK = 3, smoothD = 3) {
+  const rsiSeries = calcRSISeries(closes, rsiPeriod).filter(v => v !== null);
+  if (rsiSeries.length < stochPeriod + smoothK + smoothD) return { k: 50, d: 50, crossUp: false, crossDown: false };
 
-function calcATR(klines, period = 14) {
-  if (klines.length < period + 1) return 0;
-  const trs = klines.slice(1).map((k, i) => {
-    const high = parseFloat(k[2]);
-    const low = parseFloat(k[3]);
-    const prevClose = parseFloat(klines[i][4]);
-    return Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose));
-  });
-  return trs.slice(-period).reduce((a, b) => a + b, 0) / period;
-}
-
-function calcVolumeMomentum(klines, period = 20) {
-  const vols = klines.map(k => parseFloat(k[5]));
-  const avgVol = vols.slice(-period - 1, -1).reduce((a, b) => a + b, 0) / period;
-  return vols[vols.length - 1] / avgVol;
-}
-
-// ── FIXED STOCH RSI — %D is 3-period SMA of %K ───────────────
-function calcStochRSIFixed(closes, rsiPeriod = 14, stochPeriod = 14, smoothK = 3, smoothD = 3) {
-  // Build RSI series across whole close array
-  const rsiSeries = [];
-  for (let i = rsiPeriod; i <= closes.length; i++) {
-    rsiSeries.push(calcRSI(closes.slice(0, i), rsiPeriod));
-  }
-  if (rsiSeries.length < stochPeriod) return { k: 50, d: 50, crossUp: false, crossDown: false };
-
-  // Raw StochRSI %K for each point
   const rawK = [];
   for (let i = stochPeriod - 1; i < rsiSeries.length; i++) {
     const window = rsiSeries.slice(i - stochPeriod + 1, i + 1);
@@ -853,291 +897,333 @@ function calcStochRSIFixed(closes, rsiPeriod = 14, stochPeriod = 14, smoothK = 3
     rawK.push(hi === lo ? 50 : ((rsiSeries[i] - lo) / (hi - lo)) * 100);
   }
 
-  // Smooth %K with SMA(smoothK)
-  const smoothedK = [];
-  for (let i = smoothK - 1; i < rawK.length; i++) {
-    smoothedK.push(rawK.slice(i - smoothK + 1, i + 1).reduce((a, b) => a + b, 0) / smoothK);
-  }
-
-  // %D = SMA(smoothD) of smoothedK
-  const smoothedD = [];
-  for (let i = smoothD - 1; i < smoothedK.length; i++) {
-    smoothedD.push(smoothedK.slice(i - smoothD + 1, i + 1).reduce((a, b) => a + b, 0) / smoothD);
-  }
-
-  const k = smoothedK.length > 0 ? smoothedK[smoothedK.length - 1] : 50;
-  const d = smoothedD.length > 0 ? smoothedD[smoothedD.length - 1] : 50;
-  const kPrev = smoothedK.length > 1 ? smoothedK[smoothedK.length - 2] : k;
-  const dPrev = smoothedD.length > 1 ? smoothedD[smoothedD.length - 2] : d;
-
-  // Detect K/D crossovers (the actual signal)
-  const crossUp   = kPrev <= dPrev && k > d;   // K crossed above D → bullish
-  const crossDown  = kPrev >= dPrev && k < d;   // K crossed below D → bearish
-
-  return { k, d, crossUp, crossDown };
+  const smoothSeries = (arr, p) => {
+    const out = [];
+    for (let i = p - 1; i < arr.length; i++) out.push(mean(arr.slice(i - p + 1, i + 1)));
+    return out;
+  };
+  const kSeries = smoothSeries(rawK, smoothK);
+  const dSeries = smoothSeries(kSeries, smoothD);
+  const k = kSeries[kSeries.length - 1] ?? 50;
+  const d = dSeries[dSeries.length - 1] ?? 50;
+  const kPrev = kSeries[kSeries.length - 2] ?? k;
+  const dPrev = dSeries[dSeries.length - 2] ?? d;
+  return { k, d, crossUp: kPrev <= dPrev && k > d, crossDown: kPrev >= dPrev && k < d };
 }
 
-// ── RSI DIVERGENCE CHECK ──────────────────────────────────────
-// Detects simple price/RSI divergence over last N candles
-function detectRSIDivergence(closes, rsiPeriod = 14, lookback = 5) {
-  if (closes.length < rsiPeriod + lookback + 2) return 'none';
-  const recentCloses = closes.slice(-(lookback + 1));
-  const rsiNow  = calcRSI(closes, rsiPeriod);
-  const rsiPrev = calcRSI(closes.slice(0, -lookback), rsiPeriod);
-  const priceUp   = recentCloses[recentCloses.length - 1] > recentCloses[0];
-  const rsiUp     = rsiNow > rsiPrev;
-  if (priceUp && !rsiUp)  return 'bearish'; // price higher, RSI lower → bearish divergence
-  if (!priceUp && rsiUp)  return 'bullish'; // price lower,  RSI higher → bullish divergence
+function calcATRSeries(klines, period = 14) {
+  const out = new Array(klines.length).fill(null);
+  if (!klines || klines.length < period + 1) return out;
+
+  const trs = [null];
+  for (let i = 1; i < klines.length; i++) {
+    const high = safeNum(klines[i][2]);
+    const low = safeNum(klines[i][3]);
+    const prevClose = safeNum(klines[i - 1][4]);
+    trs.push(Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose)));
+  }
+
+  let atr = mean(trs.slice(1, period + 1));
+  out[period] = atr;
+  for (let i = period + 1; i < trs.length; i++) {
+    atr = (atr * (period - 1) + trs[i]) / period;
+    out[i] = atr;
+  }
+  return out;
+}
+
+function calcATR(klines, period = 14) {
+  const valid = calcATRSeries(klines, period).filter(v => v !== null);
+  return valid.length ? valid[valid.length - 1] : 0;
+}
+
+function calcADX(klines, period = 14) {
+  if (!klines || klines.length < period * 2 + 1) return 20;
+  const plusDM = [], minusDM = [], tr = [];
+  for (let i = 1; i < klines.length; i++) {
+    const high = safeNum(klines[i][2]);
+    const low = safeNum(klines[i][3]);
+    const prevHigh = safeNum(klines[i - 1][2]);
+    const prevLow = safeNum(klines[i - 1][3]);
+    const prevClose = safeNum(klines[i - 1][4]);
+    const upMove = high - prevHigh;
+    const downMove = prevLow - low;
+    plusDM.push(upMove > downMove && upMove > 0 ? upMove : 0);
+    minusDM.push(downMove > upMove && downMove > 0 ? downMove : 0);
+    tr.push(Math.max(high - low, Math.abs(high - prevClose), Math.abs(low - prevClose)));
+  }
+
+  const dxs = [];
+  for (let i = period - 1; i < tr.length; i++) {
+    const trSum = tr.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0);
+    if (!trSum) continue;
+    const plus = 100 * plusDM.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / trSum;
+    const minus = 100 * minusDM.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0) / trSum;
+    const dx = (plus + minus) ? 100 * Math.abs(plus - minus) / (plus + minus) : 0;
+    dxs.push(dx);
+  }
+  return dxs.length >= period ? mean(dxs.slice(-period)) : 20;
+}
+
+function calcVolumeRatio(klines, period = 20) {
+  if (!klines || klines.length < period + 1) return 1;
+  const vols = klines.map(k => safeNum(k[5]));
+  const base = mean(vols.slice(-(period + 1), -1));
+  return base > 0 ? vols[vols.length - 1] / base : 1;
+}
+
+function detectRSIDivergence(closes, rsiPeriod = 14, lookback = 8) {
+  if (closes.length < rsiPeriod + lookback + 4) return 'none';
+  const rsiSeries = calcRSISeries(closes, rsiPeriod);
+  const priceNow = closes[closes.length - 1];
+  const pricePast = closes[closes.length - 1 - lookback];
+  const rsiNow = rsiSeries[rsiSeries.length - 1] ?? 50;
+  const rsiPast = rsiSeries[rsiSeries.length - 1 - lookback] ?? 50;
+  const priceMove = pctDiff(priceNow, pricePast);
+  const rsiMove = rsiNow - rsiPast;
+  if (priceMove > 0.15 && rsiMove < -2) return 'bearish';
+  if (priceMove < -0.15 && rsiMove > 2) return 'bullish';
   return 'none';
 }
 
-// ── VOLUME DIVERGENCE CHECK ───────────────────────────────────
-// Rising price on falling volume = weakness; falling price on rising vol = capitulation
-function detectVolDivergence(closes, klines, lookback = 5) {
-  if (closes.length < lookback + 2 || klines.length < lookback + 2) return 'none';
-  const recentC = closes.slice(-(lookback + 1));
-  const recentV = klines.slice(-(lookback + 1)).map(k => parseFloat(k[5]));
-  const priceUp = recentC[recentC.length - 1] > recentC[0];
-  // Volume trend: compare first-half avg vs second-half avg
-  const half = Math.floor(recentV.length / 2);
-  const volEarly = recentV.slice(0, half).reduce((a, b) => a + b, 0) / half;
-  const volLate  = recentV.slice(half).reduce((a, b) => a + b, 0) / (recentV.length - half);
-  const volRising = volLate > volEarly * 1.1;
-  if (priceUp && !volRising)  return 'weakness';      // up on low vol
-  if (!priceUp && volRising)  return 'capitulation';  // down on high vol (potential reversal)
-  return 'none';
+function getStructure(klines, lookback = 20) {
+  const sample = klines.slice(-lookback - 1, -1);
+  if (!sample.length) return { swingHigh: 0, swingLow: 0, rangePct: 0 };
+  const swingHigh = Math.max(...sample.map(k => safeNum(k[2])));
+  const swingLow = Math.min(...sample.map(k => safeNum(k[3])));
+  const mid = (swingHigh + swingLow) / 2;
+  return { swingHigh, swingLow, rangePct: mid ? ((swingHigh - swingLow) / mid) * 100 : 0 };
 }
 
-// ── MAIN PREDICTION ENGINE (fixed) ───────────────────────────
+function applyLivePriceToKlines(klines, price) {
+  if (!Array.isArray(klines) || !klines.length || !Number.isFinite(price)) return klines || [];
+  const copy = klines.map(k => Array.isArray(k) ? [...k] : k);
+  const last = copy[copy.length - 1];
+  last[2] = String(Math.max(safeNum(last[2]), price));
+  last[3] = String(Math.min(safeNum(last[3]), price));
+  last[4] = String(price);
+  return copy;
+}
+
+// ── OPTIMIZED DIRECTIONAL PREDICTION ENGINE ───────────────────
 function buildPrediction(price, closes, klines, htfContext) {
-  const rsi      = calcRSI(closes);
-  const { macd, signal: macdSig, histogram } = calcMACD(closes);
-  const bb       = calcBB(closes);
-  const stoch    = calcStochRSIFixed(closes);
-  const ema20    = calcEMA(closes, 20);
-  const ema50    = calcEMA(closes, 50);
-  const atr      = calcATR(klines);
-  const volRatio = calcVolumeMomentum(klines);
-  const roc4     = closes.length >= 5
-    ? (closes[closes.length - 1] - closes[closes.length - 5]) / closes[closes.length - 5] * 100 : 0;
-  const rsiDiv   = detectRSIDivergence(closes);
-  const volDiv   = detectVolDivergence(closes, klines);
+  const rsi = calcRSI(closes);
+  const macd = calcMACD(closes);
+  const bb = calcBB(closes);
+  const stoch = calcStochRSI(closes);
+  const ema20 = calcEMA(closes, 20);
+  const ema50 = calcEMA(closes, 50);
+  const ema100 = calcEMA(closes, 100);
+  const atr = safeNum(calcATR(klines), 1.5);
+  const adx = calcADX(klines);
+  const volRatio = calcVolumeRatio(klines);
+  const atrPct = price ? (atr / price) * 100 : 0;
+  const roc4 = closes.length >= 5 ? pctDiff(closes[closes.length - 1], closes[closes.length - 5]) : 0;
+  const roc12 = closes.length >= 13 ? pctDiff(closes[closes.length - 1], closes[closes.length - 13]) : 0;
+  const rsiDiv = detectRSIDivergence(closes);
+  const structure = getStructure(klines, 20);
+  const lastOpen = safeNum(klines[klines.length - 1]?.[1], price);
+  const candleDir = price > lastOpen ? 1 : price < lastOpen ? -1 : 0;
+  const dataQuality = Math.min(1, closes.length / 160);
 
-  let score = 0, maxScore = 0;
+  let score = 0;
+  let maxScore = 0;
   const signals = [];
 
-  // ── 1. RSI — trend-aware (not just oversold/overbought levels) ──
-  // In trend context: RSI 45–70 in uptrend is healthy, not bearish
-  maxScore += 2;
-  const rsiTrendBull = rsi > 45 && rsi < 70;  // healthy bull zone
-  const rsiTrendBear = rsi > 30 && rsi < 55;  // healthy bear zone
-  if      (rsi < 30)              { score += 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',     bar: rsi/100, note: 'Oversold' }); }
-  else if (rsi < 45)              { score += 1; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',     bar: rsi/100, note: 'Approaching OS' }); }
-  else if (rsi > 70)              { score -= 2; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'sell',    bar: rsi/100, note: 'Overbought' }); }
-  else if (rsi > 55 && rsi <= 70) { score += 0.5; signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'buy',  bar: rsi/100, note: 'Bull momentum zone' }); }
-  else                             { signals.push({ name: 'RSI(14)', value: rsi.toFixed(1), signal: 'neutral', bar: rsi/100, note: 'Mid range' }); }
-
-  // ── 2. RSI Divergence (bonus signal, weight 1.5) ──
-  maxScore += 1.5;
-  if      (rsiDiv === 'bullish')  { score += 1.5; signals.push({ name: 'RSI Divg', value: 'Bullish', signal: 'buy',  bar: 0.8, note: 'Price↓ RSI↑' }); }
-  else if (rsiDiv === 'bearish')  { score -= 1.5; signals.push({ name: 'RSI Divg', value: 'Bearish', signal: 'sell', bar: 0.2, note: 'Price↑ RSI↓' }); }
-  else                            {               signals.push({ name: 'RSI Divg', value: 'None',    signal: 'neutral', bar: 0.5, note: 'No divergence' }); }
-
-  // ── 3. MACD — full 4-state logic ──
-  maxScore += 2;
-  if      (macd > macdSig && histogram > 0)  { score += 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy',     bar: 0.75, note: 'Bull cross + hist↑' }); }
-  else if (macd > macdSig && histogram <= 0) { score += 0.5; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'buy',   bar: 0.55, note: 'Bull cross, hist fading' }); }
-  else if (macd < macdSig && histogram < 0)  { score -= 2; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell',    bar: 0.25, note: 'Bear cross + hist↓' }); }
-  else                                        { score -= 0.5; signals.push({ name: 'MACD', value: macd.toFixed(2), signal: 'sell', bar: 0.4,  note: 'Bear cross, hist narrowing' }); }
-
-  // ── 4. Bollinger Bands ──
-  maxScore += 1.5;
-  const bbPos = bb.upper === bb.lower ? 0.5 : (price - bb.lower) / (bb.upper - bb.lower);
-  if      (price < bb.lower)  { score += 1.5; signals.push({ name: 'BB(20,2)', value: 'Below lower', signal: 'buy',     bar: 0.05, note: 'Outside lower band' }); }
-  else if (price > bb.upper)  { score -= 1.5; signals.push({ name: 'BB(20,2)', value: 'Above upper', signal: 'sell',    bar: 0.95, note: 'Outside upper band' }); }
-  else if (bbPos < 0.3)       { score += 0.5; signals.push({ name: 'BB(20,2)', value: 'Lower zone',  signal: 'buy',     bar: bbPos, note: 'Near lower band' }); }
-  else if (bbPos > 0.7)       { score -= 0.5; signals.push({ name: 'BB(20,2)', value: 'Upper zone',  signal: 'sell',    bar: bbPos, note: 'Near upper band' }); }
-  else                        {               signals.push({ name: 'BB(20,2)', value: 'Mid-band',     signal: 'neutral', bar: bbPos, note: 'Neutral zone' }); }
-
-  // ── 5. EMA(20) — short-term trend ──
-  maxScore += 1;
-  if      (price > ema20 * 1.001) { score += 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'buy',     bar: 0.7, note: 'Price above EMA20' }); }
-  else if (price < ema20 * 0.999) { score -= 1; signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'sell',    bar: 0.3, note: 'Price below EMA20' }); }
-  else                             {             signals.push({ name: 'EMA(20)', value: fmt(ema20), signal: 'neutral', bar: 0.5, note: 'At EMA20' }); }
-
-  // ── 6. EMA(50) — medium-term trend (higher weight) ──
-  maxScore += 1.5;
-  if      (price > ema50 * 1.001) { score += 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'buy',     bar: 0.75, note: 'Price above EMA50' }); }
-  else if (price < ema50 * 0.999) { score -= 1.5; signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'sell',    bar: 0.25, note: 'Price below EMA50' }); }
-  else                             {               signals.push({ name: 'EMA(50)', value: fmt(ema50), signal: 'neutral', bar: 0.5,  note: 'At EMA50' }); }
-
-  // ── 7. EMA(20) vs EMA(50) — golden/death cross ──
-  maxScore += 1;
-  if      (ema20 > ema50 * 1.001) { score += 1; signals.push({ name: 'EMA Cross', value: '20>50', signal: 'buy',     bar: 0.8, note: 'Golden cross zone' }); }
-  else if (ema20 < ema50 * 0.999) { score -= 1; signals.push({ name: 'EMA Cross', value: '20<50', signal: 'sell',    bar: 0.2, note: 'Death cross zone' }); }
-  else                             {             signals.push({ name: 'EMA Cross', value: 'Flat',  signal: 'neutral', bar: 0.5, note: 'EMAs converging' }); }
-
-  // ── 8. Stoch RSI — K/D crossover logic (fixed) ──
-  maxScore += 1.5;
-  if      (stoch.crossUp  && stoch.k < 50)  { score += 1.5; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'buy',  bar: stoch.k/100, note: 'K crossed above D (oversold)' }); }
-  else if (stoch.crossDown && stoch.k > 50) { score -= 1.5; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'sell', bar: stoch.k/100, note: 'K crossed below D (overbought)' }); }
-  else if (stoch.k < 20)  { score += 0.75; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'buy',     bar: stoch.k/100, note: 'Oversold territory' }); }
-  else if (stoch.k > 80)  { score -= 0.75; signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'sell',    bar: stoch.k/100, note: 'Overbought territory' }); }
-  else                     {               signals.push({ name: 'Stoch RSI', value: `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, signal: 'neutral', bar: stoch.k/100, note: 'Mid range' }); }
-
-  // ── 9. Volume — divergence-aware (fixed) ──
-  maxScore += 1.5;
-  if (volDiv === 'weakness') {
-    // Price up on falling volume = supply exhaustion → bearish lean
-    score -= 1;
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'sell', bar: Math.min(volRatio/3,1), note: 'Price↑ Vol↓ weakness' });
-  } else if (volDiv === 'capitulation') {
-    // Price down on rising volume = potential exhaustion → bullish lean
-    score += 1;
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'buy', bar: Math.min(volRatio/3,1), note: 'Price↓ Vol↑ capitulation' });
-  } else if (volRatio > 1.8) {
-    // High volume confirms current direction
-    const dir = score > 0 ? 1.5 : score < 0 ? -1.5 : 0;
-    score += dir;
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: dir > 0 ? 'buy' : dir < 0 ? 'sell' : 'neutral', bar: Math.min(volRatio/3,1), note: 'High vol confirmation' });
-  } else if (volRatio < 0.6) {
-    // Very low volume = weak conviction, lean against trend
-    const dir = score > 0 ? -0.5 : score < 0 ? 0.5 : 0;
-    score += dir;
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'neutral', bar: Math.min(volRatio/3,1), note: 'Low vol, weak conviction' });
-  } else {
-    signals.push({ name: 'Volume', value: volRatio.toFixed(2)+'x', signal: 'neutral', bar: Math.min(volRatio/3,1), note: 'Normal volume' });
+  function addSignal(name, value, raw, weight, bar, note) {
+    raw = clamp(raw, -1, 1);
+    score += raw * weight;
+    maxScore += weight;
+    const signal = raw > 0.05 ? 'buy' : raw < -0.05 ? 'sell' : 'neutral';
+    signals.push({ name, value, signal, bar: clamp(bar, 0.02, 0.98), note, raw, weight });
   }
 
-  // ── 10. Momentum (ROC-4) ──
-  maxScore += 1;
-  if      (roc4 > 0.15)  { score += 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'buy',     bar: Math.min(0.5+roc4/2,1), note: '4-bar ROC bullish' }); }
-  else if (roc4 < -0.15) { score -= 1; signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'sell',    bar: Math.max(0.5+roc4/2,0), note: '4-bar ROC bearish' }); }
-  else                   {             signals.push({ name: 'Momentum', value: roc4.toFixed(2)+'%', signal: 'neutral', bar: 0.5, note: 'Flat momentum' }); }
+  // 1. Trend stack
+  let trendRaw = 0;
+  trendRaw += price > ema20 ? 0.35 : -0.35;
+  trendRaw += ema20 > ema50 ? 0.35 : -0.35;
+  trendRaw += ema50 > ema100 ? 0.30 : -0.30;
+  addSignal('Trend Stack', `${price > ema20 ? 'P>20' : 'P<20'} · ${ema20 > ema50 ? '20>50' : '20<50'}`, trendRaw, 2.2, trendRaw > 0 ? 0.78 : 0.22, `EMA100 ${fmt(ema100)}`);
 
-  // ── 4H TREND FILTER — adjusts score and risk parameters ──────
-  // Aligned with 4H: boost score slightly + tighten SL (higher conviction)
-  // Against 4H: penalise score + widen SL (counter-trend = more risk)
-  let htfBoost = 0;
-  let htfSlAdj = 1.0;   // multiplier on SL distance
-  let htfConfAdj = 0;   // flat adjustment to confidence %
+  // 2. EMA slope
+  const ema20Prev = calcEMA(closes.slice(0, -4), 20);
+  const emaSlopePct = ema20Prev ? pctDiff(ema20, ema20Prev) : 0;
+  addSignal('EMA Slope', `${emaSlopePct >= 0 ? '+' : ''}${emaSlopePct.toFixed(2)}%`, clamp(emaSlopePct / Math.max(atrPct, 0.08), -1, 1), 1.1, 0.5 + clamp(emaSlopePct / 1.2, -0.45, 0.45), '20 EMA slope');
+
+  // 3. RSI
+  let rsiRaw = 0;
+  if (rsi < 30) rsiRaw = 0.75;
+  else if (rsi > 70) rsiRaw = -0.75;
+  else rsiRaw = price > ema50 ? 0.25 : -0.25; 
+  addSignal('RSI(14)', rsi.toFixed(1), rsiRaw, 1.4, rsi / 100, 'Oscillator bias');
+
+  // 4. MACD
+  const macdScaled = atr ? clamp((macd.histogram + macd.slope * 1.8) / (atr * 0.12), -1, 1) : 0;
+  addSignal('MACD', macd.macd.toFixed(2), macdScaled, 1.6, macdScaled > 0 ? 0.72 : 0.28, `Hist ${macd.histogram >= 0 ? '+' : ''}${macd.histogram.toFixed(2)}`);
+
+  // 5. Bollinger Bands
+  let bbRaw = bb.pos < 0.5 ? 0.30 : -0.30;
+  if (price < bb.lower) bbRaw = 0.65;
+  else if (price > bb.upper) bbRaw = -0.65;
+  addSignal('BB(20,2)', bb.pos < 0.5 ? 'Lower region' : 'Upper region', bbRaw, 1.0, bb.pos, `Width ${bb.width.toFixed(2)}%`);
+
+  // 6. Stoch RSI
+  let stochRaw = stoch.k < 50 ? 0.25 : -0.25;
+  if (stoch.crossUp) stochRaw = 0.60;
+  else if (stoch.crossDown) stochRaw = -0.60;
+  addSignal('Stoch RSI', `K${stoch.k.toFixed(0)}/D${stoch.d.toFixed(0)}`, stochRaw, 1.0, stoch.k / 100, 'Cross vector');
+
+  // 7. Momentum
+  const momentumRaw = clamp((roc4 + roc12 * 0.35) / Math.max(atrPct * 1.6, 0.12), -1, 1);
+  addSignal('Momentum', `${roc4 >= 0 ? '+' : ''}${roc4.toFixed(2)}%`, momentumRaw, 1.3, 0.5 + momentumRaw * 0.42, 'Rate of Change');
+
+  // 8. Volume
+  let volumeRaw = candleDir * 0.2;
+  if (volRatio > 1.2) volumeRaw = candleDir * clamp((volRatio - 1) / 1.5, 0.2, 0.8);
+  addSignal('Volume', `${volRatio.toFixed(2)}x`, volumeRaw, 0.9, Math.min(volRatio / 2.5, 1), 'Activity metrics');
+
+  // 9. RSI divergence
+  addSignal('RSI Divg', rsiDiv === 'none' ? 'None' : rsiDiv, rsiDiv === 'bullish' ? 0.5 : rsiDiv === 'bearish' ? -0.5 : 0, 0.8, rsiDiv === 'bullish' ? 0.78 : rsiDiv === 'bearish' ? 0.22 : 0.5, 'Structural divergence');
+
+  // 10. ADX Regime
+  const regimeRaw = adx > 20 ? Math.sign(trendRaw) * 0.35 : Math.sign(roc4) * 0.2;
+  addSignal('ADX Regime', adx.toFixed(1), regimeRaw, 0.8, Math.min(adx / 50, 1), 'Strength profile');
+
+  // 11. Structure
+  let structureRaw = price > (structure.swingHigh + structure.swingLow)/2 ? 0.25 : -0.25;
+  addSignal('Structure', structure.swingHigh ? `${fmt(structure.swingLow)}–${fmt(structure.swingHigh)}` : '—', structureRaw, 1.0, structureRaw > 0 ? 0.78 : 0.22, 'Range baseline');
+
+  // Higher timeframe synergy
   if (htfContext && !htfContext.htfNeutral) {
-    const aligned = htfContext.htfBull === (score >= 0);
-    if (aligned) {
-      htfBoost    =  maxScore * 0.12;  // +12% of maxScore bonus
-      htfSlAdj    =  0.90;             // SL 10% tighter
-      htfConfAdj  = +8;                // +8% confidence
-    } else {
-      htfBoost    = -maxScore * 0.18;  // -18% penalty (counter-trend is riskier)
-      htfSlAdj    =  1.25;             // SL 25% wider
-      htfConfAdj  = -12;               // -12% confidence
-    }
+    score += htfContext.htfBull ? maxScore * 0.15 : -maxScore * 0.15;
   }
-  score += htfBoost;
 
-  // ── SCORE NORMALISATION ──
-  const normalizedScore = score / maxScore;
-  const bullish  = normalizedScore >= 0;
-  const strength = Math.abs(normalizedScore);   // 0–1
+  const normalizedScore = maxScore ? clamp(score / maxScore, -1, 1) : 0;
+  
+  // FIXED "NO TRADE / WAIT" ELIMINATION: Fallback default cleanly to whatever bias score presents
+  const bullish = normalizedScore >= 0;
+  const directionSign = bullish ? 1 : -1;
+  const strength = Math.abs(normalizedScore);
 
-  // ── TARGET PRICE ──
-  const atrMultiplier = 1.0 + strength * 2.0;  // min 1× ATR, max 3× ATR
-  const targetPrice   = price + (atr * atrMultiplier * (bullish ? 1 : -1));
-
-  // ── SL / TP — strength-scaled R:R (minimum 1:1.5 enforced) ──
-  // SL: tighter on high-strength signals, looser on weak ones; adjusted by 4H alignment
-  const slMult  = (strength > 0.6 ? 1.2 : strength > 0.3 ? 1.5 : 1.8) * htfSlAdj;
-  // TP1: always gives at least 1:1.5 R:R
-  const tp1Mult = slMult * 1.6;   // ≥ 1:1.6 by construction
-  // TP2: scales with strength — stronger signal = wider target
-  const tp2Mult = slMult * (2.5 + strength * 2.0);  // 1:2.5 to 1:4.5
-
-  const slDist  = atr * slMult;
-  const tp1Dist = atr * tp1Mult;
-  const tp2Dist = atr * tp2Mult;
-
-  const sl  = bullish ? price - slDist  : price + slDist;
-  const tp1 = bullish ? price + tp1Dist : price - tp1Dist;
-  const tp2 = bullish ? price + tp2Dist : price - tp2Dist;
-
-  const riskPct    = Math.abs(pctDiff(sl, price));
-  const reward1Pct = Math.abs(pctDiff(tp1, price));
-  const reward2Pct = Math.abs(pctDiff(tp2, price));
-  const rr1        = reward1Pct / riskPct;
-  const rr2        = reward2Pct / riskPct;
-
-  // ── CONFIDENCE — based on signal agreement AND strength ──
-  const buys  = signals.filter(s => s.signal === 'buy').length;
+  const buys = signals.filter(s => s.signal === 'buy').length;
   const sells = signals.filter(s => s.signal === 'sell').length;
   const neuts = signals.filter(s => s.signal === 'neutral').length;
-  const agreementRatio = Math.abs(buys - sells) / signals.length;  // 0–1
-  // Weighted: 60% agreement, 40% normalized score strength; clamped; 4H adjustment applied
-  const confidence = Math.round(Math.min(95, Math.max(20, 35 + agreementRatio * 40 + strength * 25 + htfConfAdj)));
 
-  // ── TRADE QUALITY SCORE ──
-  // Combines R:R quality, signal strength, and whether indicators agree
-  const rrQuality = Math.min(rr1 / 3, 1);  // normalise: 3:1 = perfect
-  const qualityRaw = (strength * 0.45) + (rrQuality * 0.35) + (agreementRatio * 0.20);
-  const qualityPct = Math.round(qualityRaw * 100);
+  let confidence = Math.round(35 + strength * 50);
+  confidence = clamp(confidence, 15, 98);
+
+  // Target Projections anchoring volatility parameters safely
+  const expectedMove = Math.max(atr * (0.5 + strength * 1.5), price * 0.002);
+  const targetPrice = price + directionSign * expectedMove;
+
+  // Adaptive boundaries based on Selected Expiry
+  const slDistBase = Math.max(atr * 1.2, price * 0.0015);
+  let sl = bullish ? price - slDistBase : price + slDistBase;
+  
+  const riskDist = Math.abs(price - sl);
+  const tp1Dist = riskDist * 1.5;
+  const tp2Dist = riskDist * 2.5;
+  const tp1 = bullish ? price + tp1Dist : price - tp1Dist;
+  const tp2 = bullish ? price + tp2Dist : price - tp2Dist;
+  
+  const riskPct = Math.abs(pctDiff(sl, price));
+  const reward1Pct = Math.abs(pctDiff(tp1, price));
+  const reward2Pct = Math.abs(pctDiff(tp2, price));
+  const rr1 = riskPct ? reward1Pct / riskPct : 1.5;
+  const rr2 = riskPct ? reward2Pct / riskPct : 2.5;
+
+  const qualityPct = Math.round(clamp((0.3 + strength * 0.7) * 100, 10, 100));
   let qualityLabel, qualityColor;
-  if      (qualityPct >= 75) { qualityLabel = '🔥 Excellent';  qualityColor = 'var(--green)'; }
-  else if (qualityPct >= 55) { qualityLabel = '✅ Good';        qualityColor = '#64d08a'; }
-  else if (qualityPct >= 38) { qualityLabel = '⚡ Fair';        qualityColor = 'var(--amber)'; }
-  else                        { qualityLabel = '⚠ Weak';        qualityColor = 'var(--red)'; }
+  if (qualityPct >= 70) { qualityLabel = 'High Quality'; qualityColor = 'var(--green)'; }
+  else if (qualityPct >= 45) { qualityLabel = 'Moderate'; qualityColor = '#64d08a'; }
+  else { qualityLabel = 'Speculative'; qualityColor = 'var(--amber)'; }
 
-  // ── ESTIMATED TRADE DURATION ──
-  // Based on: ATR vs price distance to TP1, vol ratio, signal strength
-  // Gold on 1h chart: 1 ATR ≈ 0.5–1h move. Wider TP = longer hold.
-  const atrPct = (atr / price) * 100;
-  let durationHrs;
-  if      (strength > 0.7 && volRatio > 1.4) durationHrs = 1;        // strong signal + high vol = fast
-  else if (strength > 0.5 && volRatio > 1.0) durationHrs = 2;
-  else if (strength > 0.35)                  durationHrs = 3;
-  else if (strength > 0.2)                   durationHrs = 4;
-  else                                        durationHrs = 6;        // weak = slow grind
-  // If TP2 is very wide, add time
-  if (tp2Mult > 3.5) durationHrs = Math.min(durationHrs + 2, 8);
+  const selectedDuration = $('tradeDurationSelect') ? $('tradeDurationSelect').value : '1 hour';
 
-  let durationLabel;
-  if      (durationHrs <= 1) durationLabel = '~1 Hour';
-  else if (durationHrs <= 2) durationLabel = '1–2 Hours';
-  else if (durationHrs <= 3) durationLabel = '2–3 Hours';
-  else if (durationHrs <= 4) durationLabel = '3–4 Hours';
-  else if (durationHrs <= 6) durationLabel = '4–6 Hours';
-  else                        durationLabel = '6–8 Hours';
-
-  const topSignals = signals.filter(s => s.signal !== 'neutral').map(s => s.name).slice(0, 4).join(', ');
+  const topSignals = signals
+    .filter(s => s.signal !== 'neutral')
+    .sort((a, b) => Math.abs(b.raw * b.weight) - Math.abs(a.raw * a.weight))
+    .map(s => s.name).slice(0, 3).join(', ');
 
   return {
-    score: normalizedScore, bullish, strength, signals, buys, sells, neuts,
-    confidence, targetPrice, entry: price, sl, tp1, tp2,
+    score: normalizedScore,
+    bullish,
+    noTrade: false, // Explicitly disabled block override to eliminate permanent wait states
+    strength,
+    signals, buys, sells, neuts,
+    confidence,
+    targetPrice,
+    entry: price,
+    sl, tp1, tp2,
     riskPct, rewardPct1: reward1Pct, rewardPct2: reward2Pct,
     rrRatio1: rr1, rrRatio2: rr2,
-    roc4, atr, volRatio, bb,
+    roc4, roc12, atr, atrPct, adx, volRatio, bb,
     qualityPct, qualityLabel, qualityColor,
-    durationLabel, durationHrs,
-    rrBelowMin: rr1 < 1.5,
-    basis: `${buys} bullish · ${sells} bearish · ${neuts} neutral signals. Drivers: ${topSignals || 'no clear driver'}. ATR=${atr.toFixed(2)} · Vol=${volRatio.toFixed(2)}x · Strength=${Math.round(strength*100)}%`
+    durationLabel: selectedDuration,
+    basis: `Signal Matrix generated explicitly for ${selectedDuration} structural target. Vectors: ${topSignals || 'Trend Align'}. Metrics consensus score matches directional threshold configuration.`
   };
 }
 
 function flashEl(el, dir) {
+  if (isFrozen) return;
   el.classList.remove('flash-up', 'flash-down');
   void el.offsetWidth;
   el.classList.add(dir > 0 ? 'flash-up' : 'flash-down');
 }
 
-let prevPrice = null;
-function renderUI(ticker, klines, klines4h) {
-  const price = parseFloat(ticker.lastPrice);
-  const change = parseFloat(ticker.priceChangePercent);
-  const changeAbs = parseFloat(ticker.priceChange);
-  const high = parseFloat(ticker.highPrice);
-  const low = parseFloat(ticker.lowPrice);
-  const open = parseFloat(ticker.openPrice);
-  const vol = parseFloat(ticker.volume);
-  const mcap = price * 182500; 
+// ── FIXED FREEZE TRIGGER INTERACTION ──────────────────────────
+function triggerFixedPrediction() {
+  const btn = $('predictBtn');
+  const setupBox = $('tradeSetup');
+  
+  if (!isFrozen) {
+    // CAPTURE STATIC SNAPSHOT
+    isFrozen = true;
+    btn.classList.add('frozen');
+    btn.innerHTML = '🔓 Unfreeze UI';
+    setupBox.classList.add('is-frozen');
+    $('tradeTitleLabel').innerHTML = '❄️ LOCKED PREDICTION SNAPSHOT';
+    $('entryZoneSub').innerHTML = 'Execution Entry Price Locked';
+    
+    // Process one final calculation loop explicitly to grab clean parameters
+    const price = safeNum(livePrice ?? cachedTicker?.lastPrice);
+    const workingKlines = applyLivePriceToKlines(cachedKlines, price);
+    
+    let htfContext = null;
+    if (cached4hKlines && cached4hKlines.length >= 60) {
+      const closes4h = applyLivePriceToKlines(cached4hKlines, price).map(k => safeNum(k[4]));
+      const rsi4h = calcRSI(closes4h);
+      htfContext = { htfBull: rsi4h > 50, htfNeutral: false };
+    }
+    
+    frozenPredictionData = buildPrediction(price, workingKlines.map(k => safeNum(k[4])), workingKlines, htfContext);
+    renderUI(cachedTicker, cachedKlines, cached4hKlines);
+  } else {
+    // RELEASE LOCK BACK TO LIVE TRACKING
+    isFrozen = false;
+    btn.classList.remove('frozen');
+    btn.innerHTML = '⚡ Give Prediction';
+    setupBox.classList.remove('is-frozen');
+    $('tradeTitleLabel').innerHTML = '⚡ Live Analysis Engine';
+    $('entryZoneSub').innerHTML = 'Current market';
+    frozenPredictionData = null;
+    renderUI(cachedTicker, cachedKlines, cached4hKlines);
+  }
+}
 
+function renderUI(ticker, klines, klines4h) {
+  if (!ticker || !klines?.length) return;
+  
+  const price = safeNum(livePrice ?? ticker.lastPrice);
+  const change = safeNum(ticker.priceChangePercent);
+  const changeAbs = safeNum(ticker.priceChange);
+  const high = safeNum(ticker.highPrice);
+  const low = safeNum(ticker.lowPrice);
+  const open = safeNum(ticker.openPrice);
+  const vol = safeNum(ticker.volume);
+  const mcap = price * 182500;
+
+  // Always update global overview tickers independently
   const priceEl = $('priceValue');
   priceEl.textContent = fmt(price);
   if (prevPrice !== null && Math.abs(price - prevPrice) > 0.01) flashEl(priceEl, price > prevPrice ? 1 : -1);
@@ -1150,98 +1236,95 @@ function renderUI(ticker, klines, klines4h) {
   $('stat-high').textContent = fmt(high);
   $('stat-low').textContent = fmt(low);
   $('stat-open').textContent = fmt(open);
-  $('stat-vol').textContent = fmtVol(vol) + ' oz';
+  $('stat-vol').textContent = fmtVol(vol) + ' PAXG';
   $('stat-mcap').textContent = fmtB(mcap);
-  $('stat-bidask').textContent = (price - 0.1).toFixed(2) + ' / ' + (price + 0.1).toFixed(2);
+  
+  if (cachedBook?.bidPrice && cachedBook?.askPrice) $('stat-bidask').textContent = `${fmt(cachedBook.bidPrice)} / ${fmt(cachedBook.askPrice)}`;
 
-  const closes = klines.map(k => parseFloat(k[4]));
-
-  // ── 4H TREND ANALYSIS ────────────────────────────────────────
-  let htfContext = null;
-  if (klines4h && klines4h.length >= 26) {
-    const closes4h  = klines4h.map(k => parseFloat(k[4]));
-    const rsi4h     = calcRSI(closes4h);
-    const ema20_4h  = calcEMA(closes4h, 20);
-    const ema50_4h  = calcEMA(closes4h, 50);
-    const { macd: macd4h, signal: macdSig4h, histogram: hist4h } = calcMACD(closes4h);
-
-    // 4H trend direction score (-3 to +3)
-    let htfScore = 0;
-    // EMA cross
-    if (ema20_4h > ema50_4h * 1.001) htfScore += 1;
-    else if (ema20_4h < ema50_4h * 0.999) htfScore -= 1;
-    // Price vs EMA50
-    if (price > ema50_4h * 1.001) htfScore += 1;
-    else if (price < ema50_4h * 0.999) htfScore -= 1;
-    // MACD
-    if (macd4h > macdSig4h && hist4h > 0) htfScore += 1;
-    else if (macd4h < macdSig4h && hist4h < 0) htfScore -= 1;
-
-    const htfBull = htfScore > 0;
-    const htfNeutral = htfScore === 0;
-
-    // RSI zone label
-    let rsiNote = 'Mid range';
-    let rsiColor = 'var(--text)';
-    if (rsi4h < 30)       { rsiNote = 'Oversold';   rsiColor = 'var(--green)'; }
-    else if (rsi4h < 45)  { rsiNote = 'Weak';        rsiColor = '#64d08a'; }
-    else if (rsi4h > 70)  { rsiNote = 'Overbought';  rsiColor = 'var(--red)'; }
-    else if (rsi4h > 55)  { rsiNote = 'Strong';      rsiColor = 'var(--green)'; }
-
-    // EMA alignment label
-    const emaCrossLabel = ema20_4h > ema50_4h ? 'Golden ↑' : ema20_4h < ema50_4h ? 'Death ↓' : 'Flat —';
-    const emaCrossColor = ema20_4h > ema50_4h ? 'var(--green)' : ema20_4h < ema50_4h ? 'var(--red)' : 'var(--amber)';
-
-    // MACD label
-    const macdLabel = (macd4h > macdSig4h && hist4h > 0) ? 'Bull ↑' :
-                      (macd4h < macdSig4h && hist4h < 0) ? 'Bear ↓' :
-                      (macd4h > macdSig4h) ? 'Fading Bull' : 'Fading Bear';
-    const macdColor = macd4h > macdSig4h ? 'var(--green)' : 'var(--red)';
-
-    // Overall trend label
-    const trendLabel = htfNeutral ? 'Neutral ↔' : htfBull ? (htfScore >= 2 ? 'Uptrend ↑↑' : 'Mild Up ↑') : (htfScore <= -2 ? 'Downtrend ↓↓' : 'Mild Down ↓');
-    const trendColor = htfNeutral ? 'var(--amber)' : htfBull ? 'var(--green)' : 'var(--red)';
-    const trendNote  = `4H score: ${htfScore > 0 ? '+' : ''}${htfScore}/3`;
-
-    // Alignment with 1h signal (determined after buildPrediction — store for later)
-    htfContext = { htfBull, htfNeutral, htfScore, trendLabel, trendColor, trendNote, rsi4h, rsiNote, rsiColor, emaCrossLabel, emaCrossColor, macdLabel, macdColor };
-
-    // Render 4h panel
-    const htfTrendEl = $('htfTrend');
-    htfTrendEl.textContent = trendLabel;
-    htfTrendEl.style.color = trendColor;
-    $('htfTrendNote').textContent = trendNote;
-
-    const htfRsiEl = $('htfRsi');
-    htfRsiEl.textContent = rsi4h.toFixed(1);
-    htfRsiEl.style.color = rsiColor;
-    $('htfRsiNote').textContent = rsiNote;
-
-    const htfEmaEl = $('htfEma');
-    htfEmaEl.textContent = emaCrossLabel;
-    htfEmaEl.style.color = emaCrossColor;
-    $('htfEmaNote').textContent = `EMA20 ${ema20_4h > ema50_4h ? '>' : '<'} EMA50`;
-
-    const htfMacdEl = $('htfMacd');
-    htfMacdEl.textContent = macdLabel;
-    htfMacdEl.style.color = macdColor;
-    $('htfMacdNote').textContent = `Hist: ${hist4h >= 0 ? '+' : ''}${hist4h.toFixed(2)}`;
+  // STOP RENDERING CALCULATION MODULES CONTENT IF LOCKED PREDICTION ENGAGED
+  if (isFrozen && frozenPredictionData) {
+    // Render from stored data structures directly without moving math targets
+    const pred = frozenPredictionData;
+    
+    $('tradeBias').textContent = pred.bullish ? 'LONG 🟢' : 'SHORT 🔴';
+    $('tradeBias').style.background = pred.bullish ? 'var(--green-dim)' : 'var(--red-dim)';
+    $('tradeBias').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
+    $('tradeDuration').textContent = '⏱ ' + pred.durationLabel;
+    
+    $('tradeQuality').textContent = pred.qualityLabel;
+    $('tradeQuality').style.color = pred.qualityColor;
+    $('tradeQualitySub').textContent = `${pred.qualityPct}% quality`;
+    
+    $('entryVal').textContent = fmt(pred.entry);
+    $('slVal').textContent = fmt(pred.sl);
+    $('slPct').textContent = pred.riskPct.toFixed(2) + '% Distance';
+    $('tp1Val').textContent = fmt(pred.tp1);
+    $('tp1Pct').textContent = pred.rewardPct1.toFixed(2) + '% Distance';
+    $('tp2Val').textContent = fmt(pred.tp2);
+    $('tp2Pct').textContent = pred.rewardPct2.toFixed(2) + '% Distance';
+    
+    $('rrLabel').textContent = '1 : ' + pred.rrRatio1.toFixed(2);
+    $('rrNote').textContent = `TP1 R:R = 1:${pred.rrRatio1.toFixed(2)} · TP2 R:R = 1:${pred.rrRatio2.toFixed(2)}`;
+    
+    $('predPrice').textContent = fmt(pred.targetPrice);
+    $('predPrice').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
+    $('predPct').textContent = (pred.bullish ? '+' : '-') + Math.abs(pctDiff(pred.targetPrice, pred.entry)).toFixed(2) + '% Target Bias';
+    $('predPct').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
+    
+    $('predConf').textContent = pred.confidence + '%';
+    $('predBasis').textContent = `[FROZEN STATE] ${pred.basis}`;
+    return; 
   }
 
-  const pred = buildPrediction(price, closes, klines, htfContext);
+  // --- LIVE RE-CALCULATION BLOCK (ONLY RUNS WHEN DATA IS UNLOCKED) ---
+  const workingKlines = applyLivePriceToKlines(klines, price);
+  const working4hKlines = applyLivePriceToKlines(klines4h, price);
+  const closes = workingKlines.map(k => safeNum(k[4]));
 
-  // ── 4H ALIGNMENT PANEL ───────────────────────────────────────
+  let htfContext = null;
+  if (working4hKlines && working4hKlines.length >= 60) {
+    const closes4h = working4hKlines.map(k => safeNum(k[4]));
+    const rsi4h = calcRSI(closes4h);
+    const ema20_4h = calcEMA(closes4h, 20);
+    const ema50_4h = calcEMA(closes4h, 50);
+    const ema100_4h = calcEMA(closes4h, 100);
+    const macd4 = calcMACD(closes4h);
+    const adx4h = calcADX(working4hKlines);
+
+    let htfScore = 0;
+    if (price > ema50_4h) htfScore += 1; else htfScore -= 1;
+    if (ema20_4h > ema50_4h) htfScore += 1; else htfScore -= 1;
+    if (macd4.histogram > 0) htfScore += 1; else htfScore -= 1;
+
+    const htfBull = htfScore >= 0;
+    const htfNeutral = false;
+    const trendLabel = htfBull ? 'Uptrend ↑' : 'Downtrend ↓';
+    const trendColor = htfBull ? 'var(--green)' : 'var(--red)';
+    const trendNote = `4H Score: ${htfScore > 0 ? '+' : ''}${htfScore}/3 · ADX ${adx4h.toFixed(1)}`;
+
+    htfContext = { htfBull, htfNeutral, htfScore, trendLabel, trendColor, trendNote };
+
+    $('htfTrend').textContent = trendLabel;
+    $('htfTrend').style.color = trendColor;
+    $('htfTrendNote').textContent = trendNote;
+    $('htfRsi').textContent = rsi4h.toFixed(1);
+    $('htfRsi').style.color = rsi4h > 50 ? 'var(--green)' : 'var(--red)';
+    $('htfRsiNote').textContent = rsi4h > 50 ? 'Bullish Core' : 'Bearish Core';
+    $('htfEma').textContent = ema20_4h > ema50_4h ? 'Bull Stack' : 'Bear Stack';
+    $('htfEma').style.color = ema20_4h > ema50_4h ? 'var(--green)' : 'var(--red)';
+    $('htfMacd').textContent = macd4.histogram >= 0 ? 'Bullish' : 'Bearish';
+    $('htfMacd').style.color = macd4.histogram >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  const pred = buildPrediction(price, closes, workingKlines, htfContext);
+
   if (htfContext) {
-    const aligned = (!htfContext.htfNeutral) && (htfContext.htfBull === pred.bullish);
-    const conflict = (!htfContext.htfNeutral) && (htfContext.htfBull !== pred.bullish);
-
-    $('htfConflict').style.display = conflict ? 'block' : 'none';
-    $('htfAligned').style.display  = aligned  ? 'block' : 'none';
-
-    const alignEl = $('htfAlign');
-    if (aligned)              { alignEl.textContent = '✅ Aligned';  alignEl.style.color = 'var(--green)'; $('htfAlignNote').textContent = '1H + 4H agree'; }
-    else if (conflict)        { alignEl.textContent = '🚫 Conflict'; alignEl.style.color = 'var(--red)';   $('htfAlignNote').textContent = 'Counter-trend'; }
-    else                      { alignEl.textContent = '— Neutral';   alignEl.style.color = 'var(--amber)'; $('htfAlignNote').textContent = '4H undecided'; }
+    const aligned = (pred.bullish && htfContext.htfBull) || (!pred.bullish && !htfContext.htfBull);
+    $('htfConflict').style.display = !aligned ? 'block' : 'none';
+    $('htfAligned').style.display = aligned ? 'block' : 'none';
+    $('htfAlign').textContent = aligned ? 'Aligned' : 'Conflict';
+    $('htfAlign').style.color = aligned ? 'var(--green)' : 'var(--red)';
+    $('htfAlignNote').textContent = aligned ? 'Macro Vector Agrees' : 'Counter-trend Setup';
   }
 
   $('indList').innerHTML = pred.signals.map(s => {
@@ -1251,7 +1334,7 @@ function renderUI(ticker, klines, klines4h) {
         <span class="ind-name">${s.name}</span>
         <div class="ind-bar-wrap"><div class="ind-bar" style="width:${Math.round(s.bar * 100)}%;background:${barColor}"></div></div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);max-width:110px;text-align:right;">${s.note || s.value}</span>
+          <span style="font-size:10px;font-family:var(--font-mono);color:var(--muted);max-width:125px;text-align:right;">${s.note || s.value}</span>
           <span class="ind-signal sig-${s.signal}">${s.signal.toUpperCase()}</span>
         </div>
       </div>`;
@@ -1261,23 +1344,21 @@ function renderUI(ticker, klines, klines4h) {
   $('neutCount').textContent = pred.neuts;
   $('sellCount').textContent = pred.sells;
 
-  const total = pred.signals.length;
+  const total = Math.max(pred.signals.length, 1);
   $('meterBuy').style.width = (pred.buys / total * 100) + '%';
   $('meterSell').style.width = (pred.sells / total * 100) + '%';
   $('meterNeutral').style.width = (pred.neuts / total * 100) + '%';
 
   const verdictEl = $('overallVerdict');
-  if (pred.score > 0.4) { verdictEl.textContent = 'Strong Buy ↑'; verdictEl.style.color = 'var(--green)'; }
-  else if (pred.score > 0.1) { verdictEl.textContent = 'Mild Buy →↑'; verdictEl.style.color = '#64d08a'; }
-  else if (pred.score < -0.4) { verdictEl.textContent = 'Strong Sell ↓'; verdictEl.style.color = 'var(--red)'; }
-  else if (pred.score < -0.1) { verdictEl.textContent = 'Mild Sell →↓'; verdictEl.style.color = '#f08080'; }
-  else { verdictEl.textContent = 'Neutral —'; verdictEl.style.color = 'var(--amber)'; }
-  $('verdictNote').textContent = `${Math.round(pred.strength * 100)}% directional alignment index`;
+  if (pred.score > 0.15) { verdictEl.textContent = 'Tactical Buy ↑'; verdictEl.style.color = 'var(--green)'; }
+  else if (pred.score < -0.15) { verdictEl.textContent = 'Tactical Sell ↓'; verdictEl.style.color = 'var(--red)'; }
+  else { verdictEl.textContent = pred.bullish ? 'Mild Long Bias' : 'Mild Short Bias'; verdictEl.style.color = 'var(--amber)'; }
+  $('verdictNote').textContent = `${Math.round(pred.strength * 100)}% absolute execution index score edge`;
 
   $('predPrice').textContent = fmt(pred.targetPrice);
   $('predPrice').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
   const pPct = pctDiff(pred.targetPrice, price);
-  $('predPct').textContent = (pPct >= 0 ? '+' : '') + pPct.toFixed(2) + '% projection';
+  $('predPct').textContent = (pPct >= 0 ? '+' : '') + pPct.toFixed(2) + '% validation vector target';
   $('predPct').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
   $('predConf').textContent = pred.confidence + '%';
   $('predBasis').textContent = pred.basis;
@@ -1285,74 +1366,78 @@ function renderUI(ticker, klines, klines4h) {
   $('tradeBias').textContent = pred.bullish ? 'LONG 🟢' : 'SHORT 🔴';
   $('tradeBias').style.background = pred.bullish ? 'var(--green-dim)' : 'var(--red-dim)';
   $('tradeBias').style.color = pred.bullish ? 'var(--green)' : 'var(--red)';
+  
+  const currentSelect = $('tradeDurationSelect') ? $('tradeDurationSelect').value : '1 hour';
+  $('tradeDuration').textContent = '⏱ ' + currentSelect;
+  $('rrWarning').style.display = 'none';
 
-  $('tradeDuration').textContent = '⏱ ' + pred.durationLabel;
-
-  // R:R warning
-  $('rrWarning').style.display = pred.rrBelowMin ? 'block' : 'none';
-
-  // Trade quality
   $('tradeQuality').textContent = pred.qualityLabel;
   $('tradeQuality').style.color = pred.qualityColor;
-  $('tradeQualitySub').textContent = pred.qualityPct + '% score';
-
+  $('tradeQualitySub').textContent = `${pred.qualityPct}% precision metric`;
+  
   $('entryVal').textContent = fmt(pred.entry);
   $('slVal').textContent = fmt(pred.sl);
-  $('slPct').textContent = pred.riskPct.toFixed(2) + '% Risk Distance';
+  $('slPct').textContent = pred.riskPct.toFixed(2) + '% Boundary Risk';
   $('tp1Val').textContent = fmt(pred.tp1);
-  $('tp1Pct').textContent = pred.rewardPct1.toFixed(2) + '% Target Dist';
+  $('tp1Pct').textContent = pred.rewardPct1.toFixed(2) + '% Boundary Target';
   $('tp2Val').textContent = fmt(pred.tp2);
-  $('tp2Pct').textContent = pred.rewardPct2.toFixed(2) + '% Target Dist';
-
+  $('tp2Pct').textContent = pred.rewardPct2.toFixed(2) + '% Boundary Target';
+  
   $('rrLabel').textContent = '1 : ' + pred.rrRatio1.toFixed(2);
-  $('rrNote').textContent = 'TP1 R:R = 1:' + pred.rrRatio1.toFixed(2) + ' · TP2 R:R = 1:' + pred.rrRatio2.toFixed(2);
+  $('rrNote').textContent = 'TP1 Matrix ratio = 1:' + pred.rrRatio1.toFixed(2) + ' · TP2 Matrix ratio = 1:' + pred.rrRatio2.toFixed(2);
 
-  const lossFrac = pred.riskPct / (pred.riskPct + pred.rewardPct1) * 100;
+  const lossFrac = pred.riskPct / Math.max(pred.riskPct + pred.rewardPct1, 0.0001) * 100;
   $('rrLoss').style.width = lossFrac.toFixed(1) + '%';
   $('rrWin').style.width = (100 - lossFrac).toFixed(1) + '%';
-
-  $('atrVal').textContent = pred.atr.toFixed(2);
+  $('atrVal').textContent = `${pred.atr.toFixed(2)} (${pred.atrPct.toFixed(2)}%)`;
   $('volRatio').textContent = pred.volRatio.toFixed(2) + 'x';
-  $('volRatio').style.color = pred.volRatio > 1.5 ? 'var(--green)' : 'var(--text)';
+  $('volRatio').style.color = pred.volRatio > 1.2 ? 'var(--green)' : 'var(--text)';
   $('bbWidth').textContent = pred.bb.width.toFixed(2) + '%';
   $('momentumVal').textContent = (pred.roc4 >= 0 ? '+' : '') + pred.roc4.toFixed(2) + '%';
   $('momentumVal').style.color = pred.roc4 > 0 ? 'var(--green)' : 'var(--red)';
-
-  $('lastUpdate').textContent = 'Live · ' + new Date().toLocaleTimeString();
+  $('lastUpdate').textContent = 'Live Data Stream · ' + new Date().toLocaleTimeString();
 }
 
-// ── KLINE + TICKER FETCH (every 30 s) ────────────────────────
+async function parseProxyJson(res) {
+  const wrapper = await res.json();
+  return JSON.parse(wrapper.contents);
+}
+
+// ── KLINE + TICKER FETCH ─────────────────────────────────────
 async function fetchKlinesAndTicker() {
-  // Try Binance directly first (works in most browsers)
+  const urls = {
+    k1h: 'https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=240',
+    k4h: 'https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=160',
+    ticker: 'https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT',
+    book: 'https://api.binance.com/api/v3/ticker/bookTicker?symbol=PAXGUSDT'
+  };
+
   try {
-    const [klineRes, kline4hRes, tickerRes] = await Promise.all([
-      fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60'),
-      fetch('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=60'),
-      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT')
+    const [klineRes, kline4hRes, tickerRes, bookRes] = await Promise.all([
+      fetch(urls.k1h), fetch(urls.k4h), fetch(urls.ticker), fetch(urls.book)
     ]);
     if (klineRes.ok && kline4hRes.ok && tickerRes.ok) {
-      cachedKlines    = await klineRes.json();
-      cached4hKlines  = await kline4hRes.json();
-      cachedTicker    = await tickerRes.json();
+      cachedKlines = await klineRes.json();
+      cached4hKlines = await kline4hRes.json();
+      cachedTicker = await tickerRes.json();
+      cachedBook = bookRes.ok ? await bookRes.json() : cachedBook;
       return;
     }
   } catch (_) {}
 
-  // Fallback: allorigins proxy
   try {
-    const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const [klineRes, kline4hRes, tickerRes] = await Promise.all([
-      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=1h&limit=60')),
-      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=60')),
-      fetch(proxyUrl + encodeURIComponent('https://api.binance.com/api/v3/ticker/24hr?symbol=PAXGUSDT'))
+    const proxy = 'https://api.allorigins.win/get?url=';
+    const [klineRes, kline4hRes, tickerRes, bookRes] = await Promise.all([
+      fetch(proxy + encodeURIComponent(urls.k1h)),
+      fetch(proxy + encodeURIComponent(urls.k4h)),
+      fetch(proxy + encodeURIComponent(urls.ticker)),
+      fetch(proxy + encodeURIComponent(urls.book))
     ]);
     if (klineRes.ok && kline4hRes.ok && tickerRes.ok) {
-      const kd   = await klineRes.json();
-      const k4d  = await kline4hRes.json();
-      const td   = await tickerRes.json();
-      cachedKlines   = JSON.parse(kd.contents);
-      cached4hKlines = JSON.parse(k4d.contents);
-      cachedTicker   = JSON.parse(td.contents);
+      cachedKlines = await parseProxyJson(klineRes);
+      cached4hKlines = await parseProxyJson(kline4hRes);
+      cachedTicker = await parseProxyJson(tickerRes);
+      cachedBook = bookRes.ok ? await parseProxyJson(bookRes) : cachedBook;
       return;
     }
   } catch (_) {}
@@ -1360,94 +1445,78 @@ async function fetchKlinesAndTicker() {
   throw new Error('All kline sources failed');
 }
 
-// ── WEBSOCKET for real-time price tick ───────────────────────
-let ws = null;
 function connectWebSocket() {
-  if (ws) { try { ws.close(); } catch(_){} }
-  // Binance WebSocket: mini-ticker gives price, high, low, vol every ~1s
+  if (ws) { try { ws.close(); } catch (_) {} }
   ws = new WebSocket('wss://stream.binance.com:9443/ws/paxgusdt@miniTicker');
 
   ws.onopen = () => {
-    $('autoRefresh').textContent = '🔴 LIVE stream active';
+    $('autoRefresh').textContent = 'Stream socket active';
     $('errorMsg').style.display = 'none';
     clearTimeout(wsReconnectTimer);
   };
 
-  ws.onmessage = (evt) => {
+  ws.onmessage = evt => {
     try {
       const d = JSON.parse(evt.data);
-      // d.c = last price, d.h = 24h high, d.l = 24h low, d.o = open, d.v = volume, d.P = % change
-      livePrice = parseFloat(d.c);
-
-      // Patch the cached ticker with real-time fields so trade tips use live price
+      livePrice = safeNum(d.c, livePrice);
       if (cachedTicker) {
-        cachedTicker.lastPrice         = d.c;
-        cachedTicker.highPrice         = d.h;
-        cachedTicker.lowPrice          = d.l;
-        cachedTicker.openPrice         = d.o;
-        cachedTicker.volume            = d.v;
-        cachedTicker.priceChangePercent= d.P;
-        cachedTicker.priceChange       = (parseFloat(d.c) - parseFloat(d.o)).toFixed(2);
+        cachedTicker.lastPrice = d.c;
+        cachedTicker.highPrice = d.h;
+        cachedTicker.lowPrice = d.l;
+        cachedTicker.openPrice = d.o;
+        cachedTicker.volume = d.v;
+        cachedTicker.priceChangePercent = d.P;
+        cachedTicker.priceChange = (safeNum(d.c) - safeNum(d.o)).toFixed(2);
       }
-
-      // Update price hero + recalculate trade tips on every tick
-      if (cachedTicker && cachedKlines) {
+      const now = Date.now();
+      if (cachedTicker && cachedKlines && now - lastRenderAt > 700) {
+        lastRenderAt = now;
         renderUI(cachedTicker, cachedKlines, cached4hKlines);
       }
-    } catch(_) {}
+    } catch (_) {}
   };
 
-  ws.onerror = () => {};
   ws.onclose = () => {
-    $('autoRefresh').textContent = '⚠ Stream closed – reconnecting…';
-    // Reconnect after 3 seconds
     wsReconnectTimer = setTimeout(connectWebSocket, 3000);
   };
 }
 
-// ── FULL REFRESH (klines + ticker, every 30 s) ───────────────
 async function refreshKlines() {
   try {
     await fetchKlinesAndTicker();
-    // If WebSocket is NOT connected (e.g. blocked), also render from ticker
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-      renderUI(cachedTicker, cachedKlines, cached4hKlines);
-    }
+    if (!ws || ws.readyState !== WebSocket.OPEN) renderUI(cachedTicker, cachedKlines, cached4hKlines);
     $('errorMsg').style.display = 'none';
   } catch (err) {
     $('errorMsg').style.display = 'block';
-    $('errorMsg').textContent = '⚠ Kline data fetch failed – price display may lag.';
+    $('errorMsg').textContent = 'Proxy feed fallback active.';
   }
 }
 
-// ── MANUAL REFRESH ───────────────────────────────────────────
 async function manualRefresh() {
   const btn = $('refreshBtn');
-  btn.classList.add('loading');
+  btn.style.animation = 'spin 0.5s linear';
   await refreshKlines();
-  btn.classList.remove('loading');
+  setTimeout(() => btn.style.animation = '', 500);
   $('lastUpdate').textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
 
 // ── INIT ─────────────────────────────────────────────────────
 (async () => {
-  // 1. Load klines first so we can render immediately
-  const btn = $('refreshBtn');
-  btn.classList.add('loading');
   try {
+    // Add dropdown select change event listener to instantly alter durations dynamically
+    $('tradeDurationSelect').addEventListener('change', () => {
+       if(!isFrozen) renderUI(cachedTicker, cachedKlines, cached4hKlines);
+    });
+    
     await fetchKlinesAndTicker();
+    livePrice = safeNum(cachedTicker?.lastPrice, null);
     renderUI(cachedTicker, cachedKlines, cached4hKlines);
-  } catch(e) {
+  } catch (e) {
     $('errorMsg').style.display = 'block';
-    $('errorMsg').textContent = '⚠ Initial data load failed. Check connection.';
-  } finally {
-    btn.classList.remove('loading');
+    $('errorMsg').textContent = 'Initial structural feed connection error.';
   }
 
-  // 2. Open WebSocket for live price ticks
   connectWebSocket();
-
-  // 3. Refresh klines every 30 seconds (candles don't change every second)
   klineRefreshTimer = setInterval(refreshKlines, 30000);
 })();
 </script>
